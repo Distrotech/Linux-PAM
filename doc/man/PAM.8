@@ -1,0 +1,263 @@
+.\"     Title: pam
+.\"    Author: [FIXME: author] [see http://docbook.sf.net/el/author]
+.\" Generator: DocBook XSL Stylesheets v1.74.0 <http://docbook.sf.net/>
+.\"      Date: 08/17/2012
+.\"    Manual: Linux-PAM Manual
+.\"    Source: Linux-PAM Manual
+.\"  Language: English
+.\"
+.TH "PAM" "8" "08/17/2012" "Linux-PAM Manual" "Linux-PAM Manual"
+.\" -----------------------------------------------------------------
+.\" * (re)Define some macros
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" toupper - uppercase a string (locale-aware)
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de toupper
+.tr aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ
+\\$*
+.tr aabbccddeeffgghhiijjkkllmmnnooppqqrrssttuuvvwwxxyyzz
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SH-xref - format a cross-reference to an SH section
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de SH-xref
+.ie n \{\
+.\}
+.toupper \\$*
+.el \{\
+\\$*
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SH - level-one heading that works better for non-TTY output
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de1 SH
+.\" put an extra blank line of space above the head in non-TTY output
+.if t \{\
+.sp 1
+.\}
+.sp \\n[PD]u
+.nr an-level 1
+.set-an-margin
+.nr an-prevailing-indent \\n[IN]
+.fi
+.in \\n[an-margin]u
+.ti 0
+.HTML-TAG ".NH \\n[an-level]"
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+\." make the size of the head bigger
+.ps +3
+.ft B
+.ne (2v + 1u)
+.ie n \{\
+.\" if n (TTY output), use uppercase
+.toupper \\$*
+.\}
+.el \{\
+.nr an-break-flag 0
+.\" if not n (not TTY), use normal case (not uppercase)
+\\$1
+.in \\n[an-margin]u
+.ti 0
+.\" if not n (not TTY), put a border/line under subheading
+.sp -.6
+\l'\n(.lu'
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SS - level-two heading that works better for non-TTY output
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de1 SS
+.sp \\n[PD]u
+.nr an-level 1
+.set-an-margin
+.nr an-prevailing-indent \\n[IN]
+.fi
+.in \\n[IN]u
+.ti \\n[SN]u
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.ps \\n[PS-SS]u
+\." make the size of the head bigger
+.ps +2
+.ft B
+.ne (2v + 1u)
+.if \\n[.$] \&\\$*
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" BB/BE - put background/screen (filled box) around block of text
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de BB
+.if t \{\
+.sp -.5
+.br
+.in +2n
+.ll -2n
+.gcolor red
+.di BX
+.\}
+..
+.de EB
+.if t \{\
+.if "\\$2"adjust-for-leading-newline" \{\
+.sp -1
+.\}
+.br
+.di
+.in
+.ll
+.gcolor
+.nr BW \\n(.lu-\\n(.i
+.nr BH \\n(dn+.5v
+.ne \\n(BHu+.5v
+.ie "\\$2"adjust-for-leading-newline" \{\
+\M[\\$1]\h'1n'\v'+.5v'\D'P \\n(BWu 0 0 \\n(BHu -\\n(BWu 0 0 -\\n(BHu'\M[]
+.\}
+.el \{\
+\M[\\$1]\h'1n'\v'-.5v'\D'P \\n(BWu 0 0 \\n(BHu -\\n(BWu 0 0 -\\n(BHu'\M[]
+.\}
+.in 0
+.sp -.5v
+.nf
+.BX
+.in
+.sp .5v
+.fi
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" BM/EM - put colored marker in margin next to block of text
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de BM
+.if t \{\
+.br
+.ll -2n
+.gcolor red
+.di BX
+.\}
+..
+.de EM
+.if t \{\
+.br
+.di
+.ll
+.gcolor
+.nr BH \\n(dn
+.ne \\n(BHu
+\M[\\$1]\D'P -.75n 0 0 \\n(BHu -(\\n[.i]u - \\n(INu - .75n) 0 0 -\\n(BHu'\M[]
+.in 0
+.nf
+.BX
+.in
+.fi
+.\}
+..
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "Name"
+PAM, pam \- Pluggable Authentication Modules for Linux
+.SH "DESCRIPTION"
+.PP
+This manual is intended to offer a quick introduction to
+\fBLinux\-PAM\fR\&. For more information the reader is directed to the
+\fBLinux\-PAM system administrators\' guide\fR\&.
+.PP
+
+\fBLinux\-PAM\fR
+is a system of libraries that handle the authentication tasks of applications (services) on the system\&. The library provides a stable general interface (Application Programming Interface \- API) that privilege granting programs (such as
+\fBlogin\fR(1)
+and
+\fBsu\fR(1)) defer to to perform standard authentication tasks\&.
+.PP
+The principal feature of the PAM approach is that the nature of the authentication is dynamically configurable\&. In other words, the system administrator is free to choose how individual service\-providing applications will authenticate users\&. This dynamic configuration is set by the contents of the single
+\fBLinux\-PAM\fR
+configuration file
+\FC/etc/pam\&.conf\F[]\&. Alternatively, the configuration can be set by individual configuration files located in the
+\FC/etc/pam\&.d/\F[]
+directory\&. The presence of this directory will cause
+\fBLinux\-PAM\fR
+to
+\fIignore\fR
+\FC/etc/pam\&.conf\F[]\&.
+.PP
+From the point of view of the system administrator, for whom this manual is provided, it is not of primary importance to understand the internal behavior of the
+\fBLinux\-PAM\fR
+library\&. The important point to recognize is that the configuration file(s)
+\fIdefine\fR
+the connection between applications
+(\fBservices\fR) and the pluggable authentication modules
+(\fBPAM\fRs) that perform the actual authentication tasks\&.
+.PP
+\fBLinux\-PAM\fR
+separates the tasks of
+\fIauthentication\fR
+into four independent management groups:
+\fBaccount\fR
+management;
+\fBauth\fRentication management;
+\fBpassword\fR
+management; and
+\fBsession\fR
+management\&. (We highlight the abbreviations used for these groups in the configuration file\&.)
+.PP
+Simply put, these groups take care of different aspects of a typical user\'s request for a restricted service:
+.PP
+\fBaccount\fR
+\- provide account verification types of service: has the user\'s password expired?; is this user permitted access to the requested service?
+.PP
+\fBauth\fRentication \- authenticate a user and set up user credentials\&. Typically this is via some challenge\-response request that the user must satisfy: if you are who you claim to be please enter your password\&. Not all authentications are of this type, there exist hardware based authentication schemes (such as the use of smart\-cards and biometric devices), with suitable modules, these may be substituted seamlessly for more standard approaches to authentication \- such is the flexibility of
+\fBLinux\-PAM\fR\&.
+.PP
+\fBpassword\fR
+\- this group\'s responsibility is the task of updating authentication mechanisms\&. Typically, such services are strongly coupled to those of the
+\fBauth\fR
+group\&. Some authentication mechanisms lend themselves well to being updated with such a function\&. Standard UN*X password\-based access is the obvious example: please enter a replacement password\&.
+.PP
+\fBsession\fR
+\- this group of tasks cover things that should be done prior to a service being given and after it is withdrawn\&. Such tasks include the maintenance of audit trails and the mounting of the user\'s home directory\&. The
+\fBsession\fR
+management group is important as it provides both an opening and closing hook for modules to affect the services available to a user\&.
+.SH "FILES"
+.PP
+\FC/etc/pam\&.conf\F[]
+.RS 4
+the configuration file
+.RE
+.PP
+\FC/etc/pam\&.d\F[]
+.RS 4
+the
+\fBLinux\-PAM\fR
+configuration directory\&. Generally, if this directory is present, the
+\FC/etc/pam\&.conf\F[]
+file is ignored\&.
+.RE
+.SH "ERRORS"
+.PP
+Typically errors generated by the
+\fBLinux\-PAM\fR
+system of libraries, will be written to
+\fBsyslog\fR(3)\&.
+.SH "CONFORMING TO"
+.PP
+DCE\-RFC 86\&.0, October 1995\&. Contains additional features, but remains backwardly compatible with this RFC\&.
+.SH "SEE ALSO"
+.PP
+
+\fBpam\fR(3),
+\fBpam_authenticate\fR(3),
+\fBpam_sm_setcred\fR(3),
+\fBpam_strerror\fR(3),
+\fBPAM\fR(8)

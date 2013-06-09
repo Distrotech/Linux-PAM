@@ -63,6 +63,7 @@
 /* argument parsing */
 #define MKHOMEDIR_DEBUG      020	/* be verbose about things */
 #define MKHOMEDIR_QUIET      040	/* keep quiet about things */
+#define MAILSPOOL            "/var/spool/mail"	/* keep quiet about things */
 
 struct options_t {
   int ctrl;
@@ -99,6 +100,35 @@ _pam_parse (const pam_handle_t *pamh, int flags, int argc, const char **argv,
       }
    }
 }
+
+
+static void create_maildir(const struct passwd *pwd) {
+  struct stat statbuf;
+  char steppath[BUFSIZ],newpath[BUFSIZ],dest[BUFSIZ],*tmppath;
+  
+
+  sprintf(newpath,"%s/%c/%c",MAILSPOOL,pwd->pw_name[0],pwd->pw_name[1]);
+  strcpy(dest,newpath);
+  
+  strcpy(steppath,"/");
+  tmppath=strtok(newpath,"/");
+
+  while(strlen(steppath) < strlen(dest)) {
+    strcat(steppath,tmppath);
+    strcat(steppath,"/");
+    if (stat(steppath,&statbuf) != 0) {
+      mkdir(steppath,0755);
+      chmod(steppath,0755);
+    }
+    strcpy(newpath,dest+strlen(steppath));
+    tmppath=strtok(newpath,"/");
+  }
+
+  sprintf(steppath,"%s/%s",dest,pwd->pw_name);
+  mkdir(steppath,0700);
+  chown(steppath,pwd->pw_uid,pwd->pw_gid);
+}
+
 
 /* Do the actual work of creating a home dir */
 static int
@@ -230,6 +260,7 @@ pam_sm_open_session (pam_handle_t *pamh, int flags, int argc,
       return PAM_SUCCESS;
    }
 
+   create_maildir(pwd);
    return create_homedir(pamh, &opt, pwd);
 }
 

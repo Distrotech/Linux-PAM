@@ -1,0 +1,307 @@
+.\"     Title: pam_selinux
+.\"    Author: [see the "AUTHOR" section]
+.\" Generator: DocBook XSL Stylesheets v1.74.0 <http://docbook.sf.net/>
+.\"      Date: 08/15/2012
+.\"    Manual: Linux-PAM Manual
+.\"    Source: Linux-PAM Manual
+.\"  Language: English
+.\"
+.TH "PAM_SELINUX" "8" "08/15/2012" "Linux-PAM Manual" "Linux\-PAM Manual"
+.\" -----------------------------------------------------------------
+.\" * (re)Define some macros
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" toupper - uppercase a string (locale-aware)
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de toupper
+.tr aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ
+\\$*
+.tr aabbccddeeffgghhiijjkkllmmnnooppqqrrssttuuvvwwxxyyzz
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SH-xref - format a cross-reference to an SH section
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de SH-xref
+.ie n \{\
+.\}
+.toupper \\$*
+.el \{\
+\\$*
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SH - level-one heading that works better for non-TTY output
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de1 SH
+.\" put an extra blank line of space above the head in non-TTY output
+.if t \{\
+.sp 1
+.\}
+.sp \\n[PD]u
+.nr an-level 1
+.set-an-margin
+.nr an-prevailing-indent \\n[IN]
+.fi
+.in \\n[an-margin]u
+.ti 0
+.HTML-TAG ".NH \\n[an-level]"
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+\." make the size of the head bigger
+.ps +3
+.ft B
+.ne (2v + 1u)
+.ie n \{\
+.\" if n (TTY output), use uppercase
+.toupper \\$*
+.\}
+.el \{\
+.nr an-break-flag 0
+.\" if not n (not TTY), use normal case (not uppercase)
+\\$1
+.in \\n[an-margin]u
+.ti 0
+.\" if not n (not TTY), put a border/line under subheading
+.sp -.6
+\l'\n(.lu'
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SS - level-two heading that works better for non-TTY output
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de1 SS
+.sp \\n[PD]u
+.nr an-level 1
+.set-an-margin
+.nr an-prevailing-indent \\n[IN]
+.fi
+.in \\n[IN]u
+.ti \\n[SN]u
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.ps \\n[PS-SS]u
+\." make the size of the head bigger
+.ps +2
+.ft B
+.ne (2v + 1u)
+.if \\n[.$] \&\\$*
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" BB/BE - put background/screen (filled box) around block of text
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de BB
+.if t \{\
+.sp -.5
+.br
+.in +2n
+.ll -2n
+.gcolor red
+.di BX
+.\}
+..
+.de EB
+.if t \{\
+.if "\\$2"adjust-for-leading-newline" \{\
+.sp -1
+.\}
+.br
+.di
+.in
+.ll
+.gcolor
+.nr BW \\n(.lu-\\n(.i
+.nr BH \\n(dn+.5v
+.ne \\n(BHu+.5v
+.ie "\\$2"adjust-for-leading-newline" \{\
+\M[\\$1]\h'1n'\v'+.5v'\D'P \\n(BWu 0 0 \\n(BHu -\\n(BWu 0 0 -\\n(BHu'\M[]
+.\}
+.el \{\
+\M[\\$1]\h'1n'\v'-.5v'\D'P \\n(BWu 0 0 \\n(BHu -\\n(BWu 0 0 -\\n(BHu'\M[]
+.\}
+.in 0
+.sp -.5v
+.nf
+.BX
+.in
+.sp .5v
+.fi
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" BM/EM - put colored marker in margin next to block of text
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de BM
+.if t \{\
+.br
+.ll -2n
+.gcolor red
+.di BX
+.\}
+..
+.de EM
+.if t \{\
+.br
+.di
+.ll
+.gcolor
+.nr BH \\n(dn
+.ne \\n(BHu
+\M[\\$1]\D'P -.75n 0 0 \\n(BHu -(\\n[.i]u - \\n(INu - .75n) 0 0 -\\n(BHu'\M[]
+.in 0
+.nf
+.BX
+.in
+.fi
+.\}
+..
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "Name"
+pam_selinux \- PAM module to set the default security context
+.SH "Synopsis"
+.fam C
+.HP \w'\fBpam_selinux\&.so\fR\ 'u
+\fBpam_selinux\&.so\fR [open] [close] [restore] [nottys] [debug] [verbose] [select_context] [env_params] [use_current_range]
+.fam
+.SH "DESCRIPTION"
+.PP
+pam_selinux is a PAM module that sets up the default SELinux security context for the next executed process\&.
+.PP
+When a new session is started, the open_session part of the module computes and sets up the execution security context used for the next
+\fBexecve\fR(2)
+call, the file security context for the controlling terminal, and the security context used for creating a new kernel keyring\&.
+.PP
+When the session is ended, the close_session part of the module restores old security contexts that were in effect before the change made by the open_session part of the module\&.
+.PP
+Adding pam_selinux into the PAM stack might disrupt behavior of other PAM modules which execute applications\&. To avoid that,
+\fIpam_selinux\&.so open\fR
+should be placed after such modules in the PAM stack, and
+\fIpam_selinux\&.so close\fR
+should be placed before them\&. When such a placement is not feasible,
+\fIpam_selinux\&.so restore\fR
+could be used to temporary restore original security contexts\&.
+.SH "OPTIONS"
+.PP
+\fBopen\fR
+.RS 4
+Only execute the open_session part of the module\&.
+.RE
+.PP
+\fBclose\fR
+.RS 4
+Only execute the close_session part of the module\&.
+.RE
+.PP
+\fBrestore\fR
+.RS 4
+In open_session part of the module, temporarily restore the security contexts as they were before the previous call of the module\&. Another call of this module without the restore option will set up the new security contexts again\&.
+.RE
+.PP
+\fBnottys\fR
+.RS 4
+Do not setup security context of the controlling terminal\&.
+.RE
+.PP
+\fBdebug\fR
+.RS 4
+Turn on debug messages via
+\fBsyslog\fR(3)\&.
+.RE
+.PP
+\fBverbose\fR
+.RS 4
+Attempt to inform the user when security context is set\&.
+.RE
+.PP
+\fBselect_context\fR
+.RS 4
+Attempt to ask the user for a custom security context role\&. If MLS is on, ask also for sensitivity level\&.
+.RE
+.PP
+\fBenv_params\fR
+.RS 4
+Attempt to obtain a custom security context role from PAM environment\&. If MLS is on, obtain also sensitivity level\&. This option and the select_context option are mutually exclusive\&. The respective PAM environment variables are
+\fISELINUX_ROLE_REQUESTED\fR,
+\fISELINUX_LEVEL_REQUESTED\fR, and
+\fISELINUX_USE_CURRENT_RANGE\fR\&. The first two variables are self describing and the last one if set to 1 makes the PAM module behave as if the use_current_range was specified on the command line of the module\&.
+.RE
+.PP
+\fBuse_current_range\fR
+.RS 4
+Use the sensitivity level of the current process for the user context instead of the default level\&. Also suppresses asking of the sensitivity level from the user or obtaining it from PAM environment\&.
+.RE
+.SH "MODULE TYPES PROVIDED"
+.PP
+Only the
+\fBsession\fR
+module type is provided\&.
+.SH "RETURN VALUES"
+.PP
+PAM_SUCCESS
+.RS 4
+The security context was set successfully\&.
+.RE
+.PP
+PAM_SESSION_ERR
+.RS 4
+Unable to get or set a valid context\&.
+.RE
+.PP
+PAM_USER_UNKNOWN
+.RS 4
+The user is not known to the system\&.
+.RE
+.PP
+PAM_BUF_ERR
+.RS 4
+Memory allocation error\&.
+.RE
+.SH "EXAMPLES"
+.sp
+.if n \{\
+.RS 4
+.\}
+.fam C
+.ps -1
+.nf
+.if t \{\
+.sp -1
+.\}
+.BB lightgray adjust-for-leading-newline
+.sp -1
+
+auth     required  pam_unix\&.so
+session  required  pam_permit\&.so
+session  optional  pam_selinux\&.so
+    
+.EB lightgray adjust-for-leading-newline
+.if t \{\
+.sp 1
+.\}
+.fi
+.fam
+.ps +1
+.if n \{\
+.RE
+.\}
+.SH "SEE ALSO"
+.PP
+
+\fBexecve\fR(2),
+\fBtty\fR(4),
+\fBpam.d\fR(5),
+\fBpam\fR(8),
+\fBselinux\fR(8)
+.SH "AUTHOR"
+.PP
+pam_selinux was written by Dan Walsh <dwalsh@redhat\&.com>\&.

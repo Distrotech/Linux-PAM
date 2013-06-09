@@ -1,0 +1,250 @@
+.\"     Title: pam_start
+.\"    Author: [FIXME: author] [see http://docbook.sf.net/el/author]
+.\" Generator: DocBook XSL Stylesheets v1.74.0 <http://docbook.sf.net/>
+.\"      Date: 08/17/2012
+.\"    Manual: Linux-PAM Manual
+.\"    Source: Linux-PAM Manual
+.\"  Language: English
+.\"
+.TH "PAM_START" "3" "08/17/2012" "Linux-PAM Manual" "Linux-PAM Manual"
+.\" -----------------------------------------------------------------
+.\" * (re)Define some macros
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" toupper - uppercase a string (locale-aware)
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de toupper
+.tr aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ
+\\$*
+.tr aabbccddeeffgghhiijjkkllmmnnooppqqrrssttuuvvwwxxyyzz
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SH-xref - format a cross-reference to an SH section
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de SH-xref
+.ie n \{\
+.\}
+.toupper \\$*
+.el \{\
+\\$*
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SH - level-one heading that works better for non-TTY output
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de1 SH
+.\" put an extra blank line of space above the head in non-TTY output
+.if t \{\
+.sp 1
+.\}
+.sp \\n[PD]u
+.nr an-level 1
+.set-an-margin
+.nr an-prevailing-indent \\n[IN]
+.fi
+.in \\n[an-margin]u
+.ti 0
+.HTML-TAG ".NH \\n[an-level]"
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+\." make the size of the head bigger
+.ps +3
+.ft B
+.ne (2v + 1u)
+.ie n \{\
+.\" if n (TTY output), use uppercase
+.toupper \\$*
+.\}
+.el \{\
+.nr an-break-flag 0
+.\" if not n (not TTY), use normal case (not uppercase)
+\\$1
+.in \\n[an-margin]u
+.ti 0
+.\" if not n (not TTY), put a border/line under subheading
+.sp -.6
+\l'\n(.lu'
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SS - level-two heading that works better for non-TTY output
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de1 SS
+.sp \\n[PD]u
+.nr an-level 1
+.set-an-margin
+.nr an-prevailing-indent \\n[IN]
+.fi
+.in \\n[IN]u
+.ti \\n[SN]u
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.ps \\n[PS-SS]u
+\." make the size of the head bigger
+.ps +2
+.ft B
+.ne (2v + 1u)
+.if \\n[.$] \&\\$*
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" BB/BE - put background/screen (filled box) around block of text
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de BB
+.if t \{\
+.sp -.5
+.br
+.in +2n
+.ll -2n
+.gcolor red
+.di BX
+.\}
+..
+.de EB
+.if t \{\
+.if "\\$2"adjust-for-leading-newline" \{\
+.sp -1
+.\}
+.br
+.di
+.in
+.ll
+.gcolor
+.nr BW \\n(.lu-\\n(.i
+.nr BH \\n(dn+.5v
+.ne \\n(BHu+.5v
+.ie "\\$2"adjust-for-leading-newline" \{\
+\M[\\$1]\h'1n'\v'+.5v'\D'P \\n(BWu 0 0 \\n(BHu -\\n(BWu 0 0 -\\n(BHu'\M[]
+.\}
+.el \{\
+\M[\\$1]\h'1n'\v'-.5v'\D'P \\n(BWu 0 0 \\n(BHu -\\n(BWu 0 0 -\\n(BHu'\M[]
+.\}
+.in 0
+.sp -.5v
+.nf
+.BX
+.in
+.sp .5v
+.fi
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" BM/EM - put colored marker in margin next to block of text
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de BM
+.if t \{\
+.br
+.ll -2n
+.gcolor red
+.di BX
+.\}
+..
+.de EM
+.if t \{\
+.br
+.di
+.ll
+.gcolor
+.nr BH \\n(dn
+.ne \\n(BHu
+\M[\\$1]\D'P -.75n 0 0 \\n(BHu -(\\n[.i]u - \\n(INu - .75n) 0 0 -\\n(BHu'\M[]
+.in 0
+.nf
+.BX
+.in
+.fi
+.\}
+..
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "Name"
+pam_start \- initialization of PAM transaction
+.SH "Synopsis"
+.sp
+.ft B
+.fam C
+.ps -1
+.nf
+#include <security/pam_appl\&.h>
+.fi
+.fam
+.ps +1
+.ft
+.fam C
+.HP \w'int\ pam_start('u
+.BI "int pam_start(const\ char\ *" "service_name" ", const\ char\ *" "user" ", const\ struct\ pam_conv\ *" "pam_conversation" ", pam_handle_t\ **" "pamh" ");"
+.fam
+.SH "DESCRIPTION"
+.PP
+The
+\fBpam_start\fR
+function creates the PAM context and initiates the PAM transaction\&. It is the first of the PAM functions that needs to be called by an application\&. The transaction state is contained entirely within the structure identified by this handle, so it is possible to have multiple transactions in parallel\&. But it is not possible to use the same handle for different transactions, a new one is needed for every new context\&.
+.PP
+The
+\fIservice_name\fR
+argument specifies the name of the service to apply and will be stored as PAM_SERVICE item in the new context\&. The policy for the service will be read from the file
+\FC/etc/pam\&.d/service_name\F[]
+or, if that file does not exist, from
+\FC/etc/pam\&.conf\F[]\&.
+.PP
+The
+\fIuser\fR
+argument can specify the name of the target user and will be stored as PAM_USER item\&. If the argument is NULL, the module has to ask for this item if necessary\&.
+.PP
+The
+\fIpam_conversation\fR
+argument points to a
+\fIstruct pam_conv\fR
+describing the conversation function to use\&. An application must provide this for direct communication between a loaded module and the application\&.
+.PP
+Following a successful return (PAM_SUCCESS) the contents of
+\fIpamh\fR
+is a handle that contains the PAM context for successive calls to the PAM functions\&. In an error case is the content of
+\fIpamh\fR
+undefined\&.
+.PP
+The
+\fIpam_handle_t\fR
+is a blind structure and the application should not attempt to probe it directly for information\&. Instead the PAM library provides the functions
+\fBpam_set_item\fR(3)
+and
+\fBpam_get_item\fR(3)\&. The PAM handle cannot be used for mulitiple authentications at the same time as long as
+\fBpam_end\fR
+was not called on it before\&.
+.SH "RETURN VALUES"
+.PP
+PAM_ABORT
+.RS 4
+General failure\&.
+.RE
+.PP
+PAM_BUF_ERR
+.RS 4
+Memory buffer error\&.
+.RE
+.PP
+PAM_SUCCESS
+.RS 4
+Transaction was successful created\&.
+.RE
+.PP
+PAM_SYSTEM_ERR
+.RS 4
+System error, for example a NULL pointer was submitted instead of a pointer to data\&.
+.RE
+.SH "SEE ALSO"
+.PP
+
+\fBpam_get_data\fR(3),
+\fBpam_set_data\fR(3),
+\fBpam_end\fR(3),
+\fBpam_strerror\fR(3)

@@ -509,7 +509,6 @@ tally_check (tally_t oldcnt, time_t oldtime, pam_handle_t *pamh, uid_t uid,
 #ifdef HAVE_LIBAUDIT
     char buf[64];
     int audit_fd = -1;
-    const void *rhost = NULL, *tty = NULL;
 #endif
 
     if ((opts->ctrl & OPT_MAGIC_ROOT) && getuid() == 0) {
@@ -522,8 +521,6 @@ tally_check (tally_t oldcnt, time_t oldtime, pam_handle_t *pamh, uid_t uid,
     if ((audit_fd < 0) && !(errno == EINVAL || errno == EPROTONOSUPPORT ||
                             errno == EAFNOSUPPORT))
          return PAM_SYSTEM_ERR;
-    (void)pam_get_item(pamh, PAM_TTY, &tty);
-    (void)pam_get_item(pamh, PAM_RHOST, &rhost);
 #endif
     if (opts->deny != 0 &&                        /* deny==0 means no deny        */
         tally->fail_cnt > opts->deny &&           /* tally>deny means exceeded    */
@@ -533,7 +530,7 @@ tally_check (tally_t oldcnt, time_t oldtime, pam_handle_t *pamh, uid_t uid,
             /* First say that max number was hit. */
             snprintf(buf, sizeof(buf), "pam_tally2 uid=%u ", uid);
             audit_log_user_message(audit_fd, AUDIT_ANOM_LOGIN_FAILURES, buf,
-                                   rhost, NULL, tty, 1);
+                                   NULL, NULL, NULL, 1);
         }
 #endif
         if (uid) {
@@ -544,7 +541,7 @@ tally_check (tally_t oldcnt, time_t oldtime, pam_handle_t *pamh, uid_t uid,
 #ifdef HAVE_LIBAUDIT
                     snprintf(buf, sizeof(buf), "pam_tally2 uid=%u ", uid);
                     audit_log_user_message(audit_fd, AUDIT_RESP_ACCT_UNLOCK_TIMED, buf,
-                                   rhost, NULL, tty, 1);
+                                   NULL, NULL, NULL, 1);
 #endif
 	            rv = PAM_SUCCESS;
 		    goto cleanup;
@@ -558,7 +555,7 @@ tally_check (tally_t oldcnt, time_t oldtime, pam_handle_t *pamh, uid_t uid,
 #ifdef HAVE_LIBAUDIT
                     snprintf(buf, sizeof(buf), "pam_tally2 uid=%u ", uid);
                     audit_log_user_message(audit_fd, AUDIT_RESP_ACCT_UNLOCK_TIMED, buf,
-                                   rhost, NULL, tty, 1);
+                                   NULL, NULL, NULL, 1);
 #endif
 	            rv = PAM_SUCCESS;
 	            goto cleanup;
@@ -570,7 +567,7 @@ tally_check (tally_t oldcnt, time_t oldtime, pam_handle_t *pamh, uid_t uid,
         if (tally->fail_cnt == opts->deny+1) {
             /* First say that max number was hit. */
             audit_log_user_message(audit_fd, AUDIT_RESP_ACCT_LOCK, buf,
-                                   rhost, NULL, tty, 1);
+                                   NULL, NULL, NULL, 1);
         }
 #endif
 
@@ -999,7 +996,7 @@ main( int argc UNUSED, char **argv )
         int audit_fd = audit_open();
         snprintf(buf, sizeof(buf), "pam_tally2 uid=%u reset=%hu", uid, cline_reset);
         audit_log_user_message(audit_fd, AUDIT_USER_ACCT,
-                buf, NULL, NULL, ttyname(STDIN_FILENO), 1);
+                buf, NULL, NULL, NULL, 1);
         if (audit_fd >=0)
                 close(audit_fd);
 #endif
@@ -1044,7 +1041,7 @@ main( int argc UNUSED, char **argv )
       int audit_fd = audit_open();
       snprintf(buf, sizeof(buf), "pam_tally2 uid=all reset=0");
       audit_log_user_message(audit_fd, AUDIT_USER_ACCT,
-              buf, NULL, NULL, ttyname(STDIN_FILENO), 1);
+              buf, NULL, NULL, NULL, 1);
       if (audit_fd >=0)
               close(audit_fd);
 #endif

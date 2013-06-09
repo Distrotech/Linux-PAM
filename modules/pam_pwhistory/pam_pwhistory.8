@@ -1,0 +1,333 @@
+.\"     Title: pam_pwhistory
+.\"    Author: [see the "AUTHOR" section]
+.\" Generator: DocBook XSL Stylesheets v1.74.0 <http://docbook.sf.net/>
+.\"      Date: 08/17/2012
+.\"    Manual: Linux-PAM Manual
+.\"    Source: Linux-PAM Manual
+.\"  Language: English
+.\"
+.TH "PAM_PWHISTORY" "8" "08/17/2012" "Linux-PAM Manual" "Linux\-PAM Manual"
+.\" -----------------------------------------------------------------
+.\" * (re)Define some macros
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" toupper - uppercase a string (locale-aware)
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de toupper
+.tr aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ
+\\$*
+.tr aabbccddeeffgghhiijjkkllmmnnooppqqrrssttuuvvwwxxyyzz
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SH-xref - format a cross-reference to an SH section
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de SH-xref
+.ie n \{\
+.\}
+.toupper \\$*
+.el \{\
+\\$*
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SH - level-one heading that works better for non-TTY output
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de1 SH
+.\" put an extra blank line of space above the head in non-TTY output
+.if t \{\
+.sp 1
+.\}
+.sp \\n[PD]u
+.nr an-level 1
+.set-an-margin
+.nr an-prevailing-indent \\n[IN]
+.fi
+.in \\n[an-margin]u
+.ti 0
+.HTML-TAG ".NH \\n[an-level]"
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+\." make the size of the head bigger
+.ps +3
+.ft B
+.ne (2v + 1u)
+.ie n \{\
+.\" if n (TTY output), use uppercase
+.toupper \\$*
+.\}
+.el \{\
+.nr an-break-flag 0
+.\" if not n (not TTY), use normal case (not uppercase)
+\\$1
+.in \\n[an-margin]u
+.ti 0
+.\" if not n (not TTY), put a border/line under subheading
+.sp -.6
+\l'\n(.lu'
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SS - level-two heading that works better for non-TTY output
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de1 SS
+.sp \\n[PD]u
+.nr an-level 1
+.set-an-margin
+.nr an-prevailing-indent \\n[IN]
+.fi
+.in \\n[IN]u
+.ti \\n[SN]u
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.ps \\n[PS-SS]u
+\." make the size of the head bigger
+.ps +2
+.ft B
+.ne (2v + 1u)
+.if \\n[.$] \&\\$*
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" BB/BE - put background/screen (filled box) around block of text
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de BB
+.if t \{\
+.sp -.5
+.br
+.in +2n
+.ll -2n
+.gcolor red
+.di BX
+.\}
+..
+.de EB
+.if t \{\
+.if "\\$2"adjust-for-leading-newline" \{\
+.sp -1
+.\}
+.br
+.di
+.in
+.ll
+.gcolor
+.nr BW \\n(.lu-\\n(.i
+.nr BH \\n(dn+.5v
+.ne \\n(BHu+.5v
+.ie "\\$2"adjust-for-leading-newline" \{\
+\M[\\$1]\h'1n'\v'+.5v'\D'P \\n(BWu 0 0 \\n(BHu -\\n(BWu 0 0 -\\n(BHu'\M[]
+.\}
+.el \{\
+\M[\\$1]\h'1n'\v'-.5v'\D'P \\n(BWu 0 0 \\n(BHu -\\n(BWu 0 0 -\\n(BHu'\M[]
+.\}
+.in 0
+.sp -.5v
+.nf
+.BX
+.in
+.sp .5v
+.fi
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" BM/EM - put colored marker in margin next to block of text
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de BM
+.if t \{\
+.br
+.ll -2n
+.gcolor red
+.di BX
+.\}
+..
+.de EM
+.if t \{\
+.br
+.di
+.ll
+.gcolor
+.nr BH \\n(dn
+.ne \\n(BHu
+\M[\\$1]\D'P -.75n 0 0 \\n(BHu -(\\n[.i]u - \\n(INu - .75n) 0 0 -\\n(BHu'\M[]
+.in 0
+.nf
+.BX
+.in
+.fi
+.\}
+..
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "Name"
+pam_pwhistory \- PAM module to remember last passwords
+.SH "Synopsis"
+.fam C
+.HP \w'\fBpam_pwhistory\&.so\fR\ 'u
+\fBpam_pwhistory\&.so\fR [debug] [use_authtok] [enforce_for_root] [remember=\fIN\fR] [retry=\fIN\fR] [authtok_type=\fISTRING\fR]
+.fam
+.SH "DESCRIPTION"
+.PP
+This module saves the last passwords for each user in order to force password change history and keep the user from alternating between the same password too frequently\&.
+.PP
+This module does not work together with kerberos\&. In general, it does not make much sense to use this module in conjunction with NIS or LDAP, since the old passwords are stored on the local machine and are not available on another machine for password history checking\&.
+.SH "OPTIONS"
+.PP
+\fBdebug\fR
+.RS 4
+Turns on debugging via
+\fBsyslog\fR(3)\&.
+.RE
+.PP
+\fBuse_authtok\fR
+.RS 4
+When password changing enforce the module to use the new password provided by a previously stacked
+\fBpassword\fR
+module (this is used in the example of the stacking of the
+\fBpam_cracklib\fR
+module documented below)\&.
+.RE
+.PP
+\fBenforce_for_root\fR
+.RS 4
+If this option is set, the check is enforced for root, too\&.
+.RE
+.PP
+\fBremember=\fR\fB\fIN\fR\fR
+.RS 4
+The last
+\fIN\fR
+passwords for each user are saved in
+\FC/etc/security/opasswd\F[]\&. The default is
+\fI10\fR\&. Value of
+\fI0\fR
+makes the module to keep the existing contents of the
+\FCopasswd\F[]
+file unchanged\&.
+.RE
+.PP
+\fBretry=\fR\fB\fIN\fR\fR
+.RS 4
+Prompt user at most
+\fIN\fR
+times before returning with error\&. The default is
+\fI1\fR\&.
+.RE
+.PP
+\fBauthtok_type=\fR\fB\fISTRING\fR\fR
+.RS 4
+See
+\fBpam_get_authtok\fR(3)
+for more details\&.
+.RE
+.SH "MODULE TYPES PROVIDED"
+.PP
+Only the
+\fBpassword\fR
+module type is provided\&.
+.SH "RETURN VALUES"
+.PP
+PAM_AUTHTOK_ERR
+.RS 4
+No new password was entered, the user aborted password change or new password couldn\'t be set\&.
+.RE
+.PP
+PAM_IGNORE
+.RS 4
+Password history was disabled\&.
+.RE
+.PP
+PAM_MAXTRIES
+.RS 4
+Password was rejected too often\&.
+.RE
+.PP
+PAM_USER_UNKNOWN
+.RS 4
+User is not known to system\&.
+.RE
+.SH "EXAMPLES"
+.PP
+An example password section would be:
+.sp
+.if n \{\
+.RS 4
+.\}
+.fam C
+.ps -1
+.nf
+.if t \{\
+.sp -1
+.\}
+.BB lightgray adjust-for-leading-newline
+.sp -1
+
+#%PAM\-1\&.0
+password     required       pam_pwhistory\&.so
+password     required       pam_unix\&.so        use_authtok
+      
+.EB lightgray adjust-for-leading-newline
+.if t \{\
+.sp 1
+.\}
+.fi
+.fam
+.ps +1
+.if n \{\
+.RE
+.\}
+.PP
+In combination with
+\fBpam_cracklib\fR:
+.sp
+.if n \{\
+.RS 4
+.\}
+.fam C
+.ps -1
+.nf
+.if t \{\
+.sp -1
+.\}
+.BB lightgray adjust-for-leading-newline
+.sp -1
+
+#%PAM\-1\&.0
+password     required       pam_cracklib\&.so    retry=3
+password     required       pam_pwhistory\&.so   use_authtok
+password     required       pam_unix\&.so        use_authtok
+      
+.EB lightgray adjust-for-leading-newline
+.if t \{\
+.sp 1
+.\}
+.fi
+.fam
+.ps +1
+.if n \{\
+.RE
+.\}
+.sp
+.SH "FILES"
+.PP
+\FC/etc/security/opasswd\F[]
+.RS 4
+File with password history
+.RE
+.SH "SEE ALSO"
+.PP
+
+\fBpam.conf\fR(5),
+\fBpam.d\fR(5),
+\fBpam\fR(8)
+\fBpam_get_authtok\fR(3)
+.SH "AUTHOR"
+.PP
+pam_pwhistory was written by Thorsten Kukuk <kukuk@thkukuk\&.de>

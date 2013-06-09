@@ -471,7 +471,9 @@ netgroup_match (pam_handle_t *pamh, const char *netgroup,
   int retval;
   char *mydomain = NULL;
 
-#if defined(HAVE_GETDOMAINNAME)
+#ifdef HAVE_YP_GET_DEFAUTL_DOMAIN
+  yp_get_default_domain(&mydomain);
+#elif defined(HAVE_GETDOMAINNAME)
   char domainname_res[256];
 
   if (getdomainname (domainname_res, sizeof (domainname_res)) == 0)
@@ -481,8 +483,6 @@ netgroup_match (pam_handle_t *pamh, const char *netgroup,
           mydomain = domainname_res;
         }
     }
-#elif defined(HAVE_YP_GET_DEFAULT_DOMAIN)
-  yp_get_default_domain(&mydomain);
 #endif
 
 #ifdef HAVE_INNETGR

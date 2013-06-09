@@ -1,0 +1,397 @@
+.\"     Title: pam_succeed_if
+.\"    Author: [see the "AUTHOR" section]
+.\" Generator: DocBook XSL Stylesheets v1.74.0 <http://docbook.sf.net/>
+.\"      Date: 08/17/2012
+.\"    Manual: Linux-PAM
+.\"    Source: Linux-PAM
+.\"  Language: English
+.\"
+.TH "PAM_SUCCEED_IF" "8" "08/17/2012" "Linux-PAM" "Linux\-PAM"
+.\" -----------------------------------------------------------------
+.\" * (re)Define some macros
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" toupper - uppercase a string (locale-aware)
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de toupper
+.tr aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ
+\\$*
+.tr aabbccddeeffgghhiijjkkllmmnnooppqqrrssttuuvvwwxxyyzz
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SH-xref - format a cross-reference to an SH section
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de SH-xref
+.ie n \{\
+.\}
+.toupper \\$*
+.el \{\
+\\$*
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SH - level-one heading that works better for non-TTY output
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de1 SH
+.\" put an extra blank line of space above the head in non-TTY output
+.if t \{\
+.sp 1
+.\}
+.sp \\n[PD]u
+.nr an-level 1
+.set-an-margin
+.nr an-prevailing-indent \\n[IN]
+.fi
+.in \\n[an-margin]u
+.ti 0
+.HTML-TAG ".NH \\n[an-level]"
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+\." make the size of the head bigger
+.ps +3
+.ft B
+.ne (2v + 1u)
+.ie n \{\
+.\" if n (TTY output), use uppercase
+.toupper \\$*
+.\}
+.el \{\
+.nr an-break-flag 0
+.\" if not n (not TTY), use normal case (not uppercase)
+\\$1
+.in \\n[an-margin]u
+.ti 0
+.\" if not n (not TTY), put a border/line under subheading
+.sp -.6
+\l'\n(.lu'
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SS - level-two heading that works better for non-TTY output
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de1 SS
+.sp \\n[PD]u
+.nr an-level 1
+.set-an-margin
+.nr an-prevailing-indent \\n[IN]
+.fi
+.in \\n[IN]u
+.ti \\n[SN]u
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.ps \\n[PS-SS]u
+\." make the size of the head bigger
+.ps +2
+.ft B
+.ne (2v + 1u)
+.if \\n[.$] \&\\$*
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" BB/BE - put background/screen (filled box) around block of text
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de BB
+.if t \{\
+.sp -.5
+.br
+.in +2n
+.ll -2n
+.gcolor red
+.di BX
+.\}
+..
+.de EB
+.if t \{\
+.if "\\$2"adjust-for-leading-newline" \{\
+.sp -1
+.\}
+.br
+.di
+.in
+.ll
+.gcolor
+.nr BW \\n(.lu-\\n(.i
+.nr BH \\n(dn+.5v
+.ne \\n(BHu+.5v
+.ie "\\$2"adjust-for-leading-newline" \{\
+\M[\\$1]\h'1n'\v'+.5v'\D'P \\n(BWu 0 0 \\n(BHu -\\n(BWu 0 0 -\\n(BHu'\M[]
+.\}
+.el \{\
+\M[\\$1]\h'1n'\v'-.5v'\D'P \\n(BWu 0 0 \\n(BHu -\\n(BWu 0 0 -\\n(BHu'\M[]
+.\}
+.in 0
+.sp -.5v
+.nf
+.BX
+.in
+.sp .5v
+.fi
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" BM/EM - put colored marker in margin next to block of text
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de BM
+.if t \{\
+.br
+.ll -2n
+.gcolor red
+.di BX
+.\}
+..
+.de EM
+.if t \{\
+.br
+.di
+.ll
+.gcolor
+.nr BH \\n(dn
+.ne \\n(BHu
+\M[\\$1]\D'P -.75n 0 0 \\n(BHu -(\\n[.i]u - \\n(INu - .75n) 0 0 -\\n(BHu'\M[]
+.in 0
+.nf
+.BX
+.in
+.fi
+.\}
+..
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "Name"
+pam_succeed_if \- test account characteristics
+.SH "Synopsis"
+.fam C
+.HP \w'\fBpam_succeed_if\&.so\fR\ 'u
+\fBpam_succeed_if\&.so\fR [\fIflag\fR...] [\fIcondition\fR...]
+.fam
+.SH "DESCRIPTION"
+.PP
+pam_succeed_if\&.so is designed to succeed or fail authentication based on characteristics of the account belonging to the user being authenticated or values of other PAM items\&. One use is to select whether to load other modules based on this test\&.
+.PP
+The module should be given one or more conditions as module arguments, and authentication will succeed only if all of the conditions are met\&.
+.SH "OPTIONS"
+.PP
+The following
+\fIflag\fRs are supported:
+.PP
+\fBdebug\fR
+.RS 4
+Turns on debugging messages sent to syslog\&.
+.RE
+.PP
+\fBuse_uid\fR
+.RS 4
+Evaluate conditions using the account of the user whose UID the application is running under instead of the user being authenticated\&.
+.RE
+.PP
+\fBquiet\fR
+.RS 4
+Don\'t log failure or success to the system log\&.
+.RE
+.PP
+\fBquiet_fail\fR
+.RS 4
+Don\'t log failure to the system log\&.
+.RE
+.PP
+\fBquiet_success\fR
+.RS 4
+Don\'t log success to the system log\&.
+.RE
+.PP
+\fBaudit\fR
+.RS 4
+Log unknown users to the system log\&.
+.RE
+.PP
+
+\fICondition\fRs are three words: a field, a test, and a value to test for\&.
+.PP
+Available fields are
+\fIuser\fR,
+\fIuid\fR,
+\fIgid\fR,
+\fIshell\fR,
+\fIhome\fR,
+\fIruser\fR,
+\fIrhost\fR,
+\fItty\fR
+and
+\fIservice\fR:
+.PP
+\fBfield < number\fR
+.RS 4
+Field has a value numerically less than number\&.
+.RE
+.PP
+\fBfield <= number\fR
+.RS 4
+Field has a value numerically less than or equal to number\&.
+.RE
+.PP
+\fBfield eq number\fR
+.RS 4
+Field has a value numerically equal to number\&.
+.RE
+.PP
+\fBfield >= number\fR
+.RS 4
+Field has a value numerically greater than or equal to number\&.
+.RE
+.PP
+\fBfield > number\fR
+.RS 4
+Field has a value numerically greater than number\&.
+.RE
+.PP
+\fBfield ne number\fR
+.RS 4
+Field has a value numerically different from number\&.
+.RE
+.PP
+\fBfield = string\fR
+.RS 4
+Field exactly matches the given string\&.
+.RE
+.PP
+\fBfield != string\fR
+.RS 4
+Field does not match the given string\&.
+.RE
+.PP
+\fBfield =~ glob\fR
+.RS 4
+Field matches the given glob\&.
+.RE
+.PP
+\fBfield !~ glob\fR
+.RS 4
+Field does not match the given glob\&.
+.RE
+.PP
+\fBfield in item:item:\&.\&.\&.\fR
+.RS 4
+Field is contained in the list of items separated by colons\&.
+.RE
+.PP
+\fBfield notin item:item:\&.\&.\&.\fR
+.RS 4
+Field is not contained in the list of items separated by colons\&.
+.RE
+.PP
+\fBuser ingroup group\fR
+.RS 4
+User is in given group\&.
+.RE
+.PP
+\fBuser notingroup group\fR
+.RS 4
+User is not in given group\&.
+.RE
+.PP
+\fBuser innetgr netgroup\fR
+.RS 4
+(user,host) is in given netgroup\&.
+.RE
+.PP
+\fBuser notinnetgr group\fR
+.RS 4
+(user,host) is not in given netgroup\&.
+.RE
+.SH "MODULE TYPES PROVIDED"
+.PP
+All module types (\fBaccount\fR,
+\fBauth\fR,
+\fBpassword\fR
+and
+\fBsession\fR) are provided\&.
+.SH "RETURN VALUES"
+.PP
+PAM_SUCCESS
+.RS 4
+The condition was true\&.
+.RE
+.PP
+PAM_AUTH_ERR
+.RS 4
+The condition was false\&.
+.RE
+.PP
+PAM_SERVICE_ERR
+.RS 4
+A service error occurred or the arguments can\'t be parsed correctly\&.
+.RE
+.SH "EXAMPLES"
+.PP
+To emulate the behaviour of
+\fIpam_wheel\fR, except there is no fallback to group 0:
+.sp
+.if n \{\
+.RS 4
+.\}
+.fam C
+.ps -1
+.nf
+.if t \{\
+.sp -1
+.\}
+.BB lightgray adjust-for-leading-newline
+.sp -1
+
+auth required pam_succeed_if\&.so quiet user ingroup wheel
+    
+.EB lightgray adjust-for-leading-newline
+.if t \{\
+.sp 1
+.\}
+.fi
+.fam
+.ps +1
+.if n \{\
+.RE
+.\}
+.PP
+Given that the type matches, only loads the othermodule rule if the UID is over 500\&. Adjust the number after default to skip several rules\&.
+.sp
+.if n \{\
+.RS 4
+.\}
+.fam C
+.ps -1
+.nf
+.if t \{\
+.sp -1
+.\}
+.BB lightgray adjust-for-leading-newline
+.sp -1
+
+type [default=1 success=ignore] pam_succeed_if\&.so quiet uid > 500
+type required othermodule\&.so arguments\&.\&.\&.
+    
+.EB lightgray adjust-for-leading-newline
+.if t \{\
+.sp 1
+.\}
+.fi
+.fam
+.ps +1
+.if n \{\
+.RE
+.\}
+.SH "SEE ALSO"
+.PP
+
+\fBglob\fR(7),
+\fBpam\fR(8)
+.SH "AUTHOR"
+.PP
+Nalin Dahyabhai <nalin@redhat\&.com>

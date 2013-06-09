@@ -14,4 +14,4 @@ noinst_PROGRAMS = pam_conv1
 
 pam_conv1_SOURCES = pam_conv_l.l pam_conv_y.y
 
-pam_conv1_LDADD = @LEXLIB@
+pam_conv1_LDADD = $(LEXLIB)

@@ -1,0 +1,381 @@
+.\"     Title: pam_listfile
+.\"    Author: [see the "AUTHOR" section]
+.\" Generator: DocBook XSL Stylesheets v1.74.0 <http://docbook.sf.net/>
+.\"      Date: 08/17/2012
+.\"    Manual: Linux-PAM Manual
+.\"    Source: Linux-PAM Manual
+.\"  Language: English
+.\"
+.TH "PAM_LISTFILE" "8" "08/17/2012" "Linux-PAM Manual" "Linux\-PAM Manual"
+.\" -----------------------------------------------------------------
+.\" * (re)Define some macros
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" toupper - uppercase a string (locale-aware)
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de toupper
+.tr aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ
+\\$*
+.tr aabbccddeeffgghhiijjkkllmmnnooppqqrrssttuuvvwwxxyyzz
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SH-xref - format a cross-reference to an SH section
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de SH-xref
+.ie n \{\
+.\}
+.toupper \\$*
+.el \{\
+\\$*
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SH - level-one heading that works better for non-TTY output
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de1 SH
+.\" put an extra blank line of space above the head in non-TTY output
+.if t \{\
+.sp 1
+.\}
+.sp \\n[PD]u
+.nr an-level 1
+.set-an-margin
+.nr an-prevailing-indent \\n[IN]
+.fi
+.in \\n[an-margin]u
+.ti 0
+.HTML-TAG ".NH \\n[an-level]"
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+\." make the size of the head bigger
+.ps +3
+.ft B
+.ne (2v + 1u)
+.ie n \{\
+.\" if n (TTY output), use uppercase
+.toupper \\$*
+.\}
+.el \{\
+.nr an-break-flag 0
+.\" if not n (not TTY), use normal case (not uppercase)
+\\$1
+.in \\n[an-margin]u
+.ti 0
+.\" if not n (not TTY), put a border/line under subheading
+.sp -.6
+\l'\n(.lu'
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SS - level-two heading that works better for non-TTY output
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de1 SS
+.sp \\n[PD]u
+.nr an-level 1
+.set-an-margin
+.nr an-prevailing-indent \\n[IN]
+.fi
+.in \\n[IN]u
+.ti \\n[SN]u
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.ps \\n[PS-SS]u
+\." make the size of the head bigger
+.ps +2
+.ft B
+.ne (2v + 1u)
+.if \\n[.$] \&\\$*
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" BB/BE - put background/screen (filled box) around block of text
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de BB
+.if t \{\
+.sp -.5
+.br
+.in +2n
+.ll -2n
+.gcolor red
+.di BX
+.\}
+..
+.de EB
+.if t \{\
+.if "\\$2"adjust-for-leading-newline" \{\
+.sp -1
+.\}
+.br
+.di
+.in
+.ll
+.gcolor
+.nr BW \\n(.lu-\\n(.i
+.nr BH \\n(dn+.5v
+.ne \\n(BHu+.5v
+.ie "\\$2"adjust-for-leading-newline" \{\
+\M[\\$1]\h'1n'\v'+.5v'\D'P \\n(BWu 0 0 \\n(BHu -\\n(BWu 0 0 -\\n(BHu'\M[]
+.\}
+.el \{\
+\M[\\$1]\h'1n'\v'-.5v'\D'P \\n(BWu 0 0 \\n(BHu -\\n(BWu 0 0 -\\n(BHu'\M[]
+.\}
+.in 0
+.sp -.5v
+.nf
+.BX
+.in
+.sp .5v
+.fi
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" BM/EM - put colored marker in margin next to block of text
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de BM
+.if t \{\
+.br
+.ll -2n
+.gcolor red
+.di BX
+.\}
+..
+.de EM
+.if t \{\
+.br
+.di
+.ll
+.gcolor
+.nr BH \\n(dn
+.ne \\n(BHu
+\M[\\$1]\D'P -.75n 0 0 \\n(BHu -(\\n[.i]u - \\n(INu - .75n) 0 0 -\\n(BHu'\M[]
+.in 0
+.nf
+.BX
+.in
+.fi
+.\}
+..
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "Name"
+pam_listfile \- deny or allow services based on an arbitrary file
+.SH "Synopsis"
+.fam C
+.HP \w'\fBpam_listfile\&.so\fR\ 'u
+\fBpam_listfile\&.so\fR item=[tty|user|rhost|ruser|group|shell] sense=[allow|deny] file=\fI/path/filename\fR onerr=[succeed|fail] [apply=[\fIuser\fR|\fI@group\fR]] [quiet]
+.fam
+.SH "DESCRIPTION"
+.PP
+pam_listfile is a PAM module which provides a way to deny or allow services based on an arbitrary file\&.
+.PP
+The module gets the
+\fBitem\fR
+of the type specified \-\-
+\fIuser\fR
+specifies the username,
+\fIPAM_USER\fR; tty specifies the name of the terminal over which the request has been made,
+\fIPAM_TTY\fR; rhost specifies the name of the remote host (if any) from which the request was made,
+\fIPAM_RHOST\fR; and ruser specifies the name of the remote user (if available) who made the request,
+\fIPAM_RUSER\fR
+\-\- and looks for an instance of that item in the
+\fBfile=\fR\fB\fIfilename\fR\fR\&.
+\FCfilename\F[]
+contains one line per item listed\&. If the item is found, then if
+\fBsense=\fR\fB\fIallow\fR\fR,
+\fIPAM_SUCCESS\fR
+is returned, causing the authorization request to succeed; else if
+\fBsense=\fR\fB\fIdeny\fR\fR,
+\fIPAM_AUTH_ERR\fR
+is returned, causing the authorization request to fail\&.
+.PP
+If an error is encountered (for instance, if
+\FCfilename\F[]
+does not exist, or a poorly\-constructed argument is encountered), then if
+\fIonerr=succeed\fR,
+\fIPAM_SUCCESS\fR
+is returned, otherwise if
+\fIonerr=fail\fR,
+\fIPAM_AUTH_ERR\fR
+or
+\fIPAM_SERVICE_ERR\fR
+(as appropriate) will be returned\&.
+.PP
+An additional argument,
+\fBapply=\fR, can be used to restrict the application of the above to a specific user (\fBapply=\fR\fB\fIusername\fR\fR) or a given group (\fBapply=\fR\fB\fI@groupname\fR\fR)\&. This added restriction is only meaningful when used with the
+\fItty\fR,
+\fIrhost\fR
+and
+\fIshell\fR
+items\&.
+.PP
+Besides this last one, all arguments should be specified; do not count on any default behavior\&.
+.PP
+No credentials are awarded by this module\&.
+.SH "OPTIONS"
+.PP
+.PP
+\fBitem=[tty|user|rhost|ruser|group|shell]\fR
+.RS 4
+What is listed in the file and should be checked for\&.
+.RE
+.PP
+\fBsense=[allow|deny]\fR
+.RS 4
+Action to take if found in file, if the item is NOT found in the file, then the opposite action is requested\&.
+.RE
+.PP
+\fBfile=\fR\fB\fI/path/filename\fR\fR
+.RS 4
+File containing one item per line\&. The file needs to be a plain file and not world writable\&.
+.RE
+.PP
+\fBonerr=[succeed|fail]\fR
+.RS 4
+What to do if something weird happens like being unable to open the file\&.
+.RE
+.PP
+\fBapply=[\fR\fB\fIuser\fR\fR\fB|\fR\fB\fI@group\fR\fR\fB]\fR
+.RS 4
+Restrict the user class for which the restriction apply\&. Note that with
+\fBitem=[user|ruser|group]\fR
+this does not make sense, but for
+\fBitem=[tty|rhost|shell]\fR
+it have a meaning\&.
+.RE
+.PP
+\fBquiet\fR
+.RS 4
+Do not treat service refusals or missing list files as errors that need to be logged\&.
+.RE
+.SH "MODULE TYPES PROVIDED"
+.PP
+All module types (\fBauth\fR,
+\fBaccount\fR,
+\fBpassword\fR
+and
+\fBsession\fR) are provided\&.
+.SH "RETURN VALUES"
+.PP
+.PP
+PAM_AUTH_ERR
+.RS 4
+Authentication failure\&.
+.RE
+.PP
+PAM_BUF_ERR
+.RS 4
+Memory buffer error\&.
+.RE
+.PP
+PAM_IGNORE
+.RS 4
+The rule does not apply to the
+\fBapply\fR
+option\&.
+.RE
+.PP
+PAM_SERVICE_ERR
+.RS 4
+Error in service module\&.
+.RE
+.PP
+PAM_SUCCESS
+.RS 4
+Success\&.
+.RE
+.SH "EXAMPLES"
+.PP
+Classic \'ftpusers\' authentication can be implemented with this entry in
+\FC/etc/pam\&.d/ftpd\F[]:
+.sp
+.if n \{\
+.RS 4
+.\}
+.fam C
+.ps -1
+.nf
+.if t \{\
+.sp -1
+.\}
+.BB lightgray adjust-for-leading-newline
+.sp -1
+
+#
+# deny ftp\-access to users listed in the /etc/ftpusers file
+#
+auth    required       pam_listfile\&.so \e
+        onerr=succeed item=user sense=deny file=/etc/ftpusers
+      
+.EB lightgray adjust-for-leading-newline
+.if t \{\
+.sp 1
+.\}
+.fi
+.fam
+.ps +1
+.if n \{\
+.RE
+.\}
+.sp
+Note, users listed in
+\FC/etc/ftpusers\F[]
+file are (counterintuitively)
+\fInot\fR
+allowed access to the ftp service\&.
+.PP
+To allow login access only for certain users, you can use a
+\FC/etc/pam\&.d/login\F[]
+entry like this:
+.sp
+.if n \{\
+.RS 4
+.\}
+.fam C
+.ps -1
+.nf
+.if t \{\
+.sp -1
+.\}
+.BB lightgray adjust-for-leading-newline
+.sp -1
+
+#
+# permit login to users listed in /etc/loginusers
+#
+auth    required       pam_listfile\&.so \e
+        onerr=fail item=user sense=allow file=/etc/loginusers
+      
+.EB lightgray adjust-for-leading-newline
+.if t \{\
+.sp 1
+.\}
+.fi
+.fam
+.ps +1
+.if n \{\
+.RE
+.\}
+.sp
+For this example to work, all users who are allowed to use the login service should be listed in the file
+\FC/etc/loginusers\F[]\&. Unless you are explicitly trying to lock out root, make sure that when you do this, you leave a way for root to log in, either by listing root in
+\FC/etc/loginusers\F[], or by listing a user who is able to
+\fIsu\fR
+to the root account\&.
+.SH "SEE ALSO"
+.PP
+
+\fBpam.conf\fR(5),
+\fBpam.d\fR(5),
+\fBpam\fR(8)
+.SH "AUTHOR"
+.PP
+pam_listfile was written by Michael K\&. Johnson <johnsonm@redhat\&.com> and Elliot Lee <sopwith@cuc\&.edu>\&.

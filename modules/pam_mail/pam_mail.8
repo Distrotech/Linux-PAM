@@ -1,0 +1,315 @@
+.\"     Title: pam_mail
+.\"    Author: [see the "AUTHOR" section]
+.\" Generator: DocBook XSL Stylesheets v1.74.0 <http://docbook.sf.net/>
+.\"      Date: 08/17/2012
+.\"    Manual: Linux-PAM Manual
+.\"    Source: Linux-PAM Manual
+.\"  Language: English
+.\"
+.TH "PAM_MAIL" "8" "08/17/2012" "Linux-PAM Manual" "Linux\-PAM Manual"
+.\" -----------------------------------------------------------------
+.\" * (re)Define some macros
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" toupper - uppercase a string (locale-aware)
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de toupper
+.tr aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ
+\\$*
+.tr aabbccddeeffgghhiijjkkllmmnnooppqqrrssttuuvvwwxxyyzz
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SH-xref - format a cross-reference to an SH section
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de SH-xref
+.ie n \{\
+.\}
+.toupper \\$*
+.el \{\
+\\$*
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SH - level-one heading that works better for non-TTY output
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de1 SH
+.\" put an extra blank line of space above the head in non-TTY output
+.if t \{\
+.sp 1
+.\}
+.sp \\n[PD]u
+.nr an-level 1
+.set-an-margin
+.nr an-prevailing-indent \\n[IN]
+.fi
+.in \\n[an-margin]u
+.ti 0
+.HTML-TAG ".NH \\n[an-level]"
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+\." make the size of the head bigger
+.ps +3
+.ft B
+.ne (2v + 1u)
+.ie n \{\
+.\" if n (TTY output), use uppercase
+.toupper \\$*
+.\}
+.el \{\
+.nr an-break-flag 0
+.\" if not n (not TTY), use normal case (not uppercase)
+\\$1
+.in \\n[an-margin]u
+.ti 0
+.\" if not n (not TTY), put a border/line under subheading
+.sp -.6
+\l'\n(.lu'
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SS - level-two heading that works better for non-TTY output
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de1 SS
+.sp \\n[PD]u
+.nr an-level 1
+.set-an-margin
+.nr an-prevailing-indent \\n[IN]
+.fi
+.in \\n[IN]u
+.ti \\n[SN]u
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.ps \\n[PS-SS]u
+\." make the size of the head bigger
+.ps +2
+.ft B
+.ne (2v + 1u)
+.if \\n[.$] \&\\$*
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" BB/BE - put background/screen (filled box) around block of text
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de BB
+.if t \{\
+.sp -.5
+.br
+.in +2n
+.ll -2n
+.gcolor red
+.di BX
+.\}
+..
+.de EB
+.if t \{\
+.if "\\$2"adjust-for-leading-newline" \{\
+.sp -1
+.\}
+.br
+.di
+.in
+.ll
+.gcolor
+.nr BW \\n(.lu-\\n(.i
+.nr BH \\n(dn+.5v
+.ne \\n(BHu+.5v
+.ie "\\$2"adjust-for-leading-newline" \{\
+\M[\\$1]\h'1n'\v'+.5v'\D'P \\n(BWu 0 0 \\n(BHu -\\n(BWu 0 0 -\\n(BHu'\M[]
+.\}
+.el \{\
+\M[\\$1]\h'1n'\v'-.5v'\D'P \\n(BWu 0 0 \\n(BHu -\\n(BWu 0 0 -\\n(BHu'\M[]
+.\}
+.in 0
+.sp -.5v
+.nf
+.BX
+.in
+.sp .5v
+.fi
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" BM/EM - put colored marker in margin next to block of text
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de BM
+.if t \{\
+.br
+.ll -2n
+.gcolor red
+.di BX
+.\}
+..
+.de EM
+.if t \{\
+.br
+.di
+.ll
+.gcolor
+.nr BH \\n(dn
+.ne \\n(BHu
+\M[\\$1]\D'P -.75n 0 0 \\n(BHu -(\\n[.i]u - \\n(INu - .75n) 0 0 -\\n(BHu'\M[]
+.in 0
+.nf
+.BX
+.in
+.fi
+.\}
+..
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "Name"
+pam_mail \- Inform about available mail
+.SH "Synopsis"
+.fam C
+.HP \w'\fBpam_mail\&.so\fR\ 'u
+\fBpam_mail\&.so\fR [close] [debug] [dir=\fImaildir\fR] [empty] [hash=\fIcount\fR] [noenv] [nopen] [quiet] [standard]
+.fam
+.SH "DESCRIPTION"
+.PP
+The pam_mail PAM module provides the "you have new mail" service to the user\&. It can be plugged into any application that has credential or session hooks\&. It gives a single message indicating the
+\fInewness\fR
+of any mail it finds in the user\'s mail folder\&. This module also sets the PAM environment variable,
+\fBMAIL\fR, to the user\'s mail directory\&.
+.PP
+If the mail spool file (be it
+\FC/var/mail/$USER\F[]
+or a pathname given with the
+\fBdir=\fR
+parameter) is a directory then pam_mail assumes it is in the
+\fIMaildir\fR
+format\&.
+.SH "OPTIONS"
+.PP
+.PP
+\fBclose\fR
+.RS 4
+Indicate if the user has any mail also on logout\&.
+.RE
+.PP
+\fBdebug\fR
+.RS 4
+Print debug information\&.
+.RE
+.PP
+\fBdir=\fR\fB\fImaildir\fR\fR
+.RS 4
+Look for the users\' mail in an alternative location defined by
+\FCmaildir/<login>\F[]\&. The default location for mail is
+\FC/var/mail/<login>\F[]\&. Note, if the supplied
+\FCmaildir\F[]
+is prefixed by a \'~\', the directory is interpreted as indicating a file in the user\'s home directory\&.
+.RE
+.PP
+\fBempty\fR
+.RS 4
+Also print message if user has no mail\&.
+.RE
+.PP
+\fBhash=\fR\fB\fIcount\fR\fR
+.RS 4
+Mail directory hash depth\&. For example, a
+\fIhashcount\fR
+of 2 would make the mail file be
+\FC/var/spool/mail/u/s/user\F[]\&.
+.RE
+.PP
+\fBnoenv\fR
+.RS 4
+Do not set the
+\fBMAIL\fR
+environment variable\&.
+.RE
+.PP
+\fBnopen\fR
+.RS 4
+Don\'t print any mail information on login\&. This flag is useful to get the
+\fBMAIL\fR
+environment variable set, but to not display any information about it\&.
+.RE
+.PP
+\fBquiet\fR
+.RS 4
+Only report when there is new mail\&.
+.RE
+.PP
+\fBstandard\fR
+.RS 4
+Old style "You have\&.\&.\&." format which doesn\'t show the mail spool being used\&. This also implies "empty"\&.
+.RE
+.SH "MODULE TYPES PROVIDED"
+.PP
+The
+\fBsession\fR
+and
+\fBauth\fR
+(on establishment and deletion of credentials) module types are provided\&.
+.SH "RETURN VALUES"
+.PP
+PAM_BUF_ERR
+.RS 4
+Memory buffer error\&.
+.RE
+.PP
+PAM_SERVICE_ERR
+.RS 4
+Badly formed arguments\&.
+.RE
+.PP
+PAM_SUCCESS
+.RS 4
+Success\&.
+.RE
+.PP
+PAM_USER_UNKNOWN
+.RS 4
+User not known\&.
+.RE
+.SH "EXAMPLES"
+.PP
+Add the following line to
+\FC/etc/pam\&.d/login\F[]
+to indicate that the user has new mail when they login to the system\&.
+.sp
+.if n \{\
+.RS 4
+.\}
+.fam C
+.ps -1
+.nf
+.if t \{\
+.sp -1
+.\}
+.BB lightgray adjust-for-leading-newline
+.sp -1
+
+session  optional  pam_mail\&.so standard
+      
+.EB lightgray adjust-for-leading-newline
+.if t \{\
+.sp 1
+.\}
+.fi
+.fam
+.ps +1
+.if n \{\
+.RE
+.\}
+.sp
+.SH "SEE ALSO"
+.PP
+
+\fBpam.conf\fR(5),
+\fBpam.d\fR(5),
+\fBpam\fR(8)
+.SH "AUTHOR"
+.PP
+pam_mail was written by Andrew G\&. Morgan <morgan@kernel\&.org>\&.

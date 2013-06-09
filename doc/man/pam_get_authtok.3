@@ -1,0 +1,321 @@
+.\"     Title: pam_get_authtok
+.\"    Author: [FIXME: author] [see http://docbook.sf.net/el/author]
+.\" Generator: DocBook XSL Stylesheets v1.74.0 <http://docbook.sf.net/>
+.\"      Date: 08/17/2012
+.\"    Manual: Linux-PAM Manual
+.\"    Source: Linux-PAM Manual
+.\"  Language: English
+.\"
+.TH "PAM_GET_AUTHTOK" "3" "08/17/2012" "Linux-PAM Manual" "Linux-PAM Manual"
+.\" -----------------------------------------------------------------
+.\" * (re)Define some macros
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" toupper - uppercase a string (locale-aware)
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de toupper
+.tr aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ
+\\$*
+.tr aabbccddeeffgghhiijjkkllmmnnooppqqrrssttuuvvwwxxyyzz
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SH-xref - format a cross-reference to an SH section
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de SH-xref
+.ie n \{\
+.\}
+.toupper \\$*
+.el \{\
+\\$*
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SH - level-one heading that works better for non-TTY output
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de1 SH
+.\" put an extra blank line of space above the head in non-TTY output
+.if t \{\
+.sp 1
+.\}
+.sp \\n[PD]u
+.nr an-level 1
+.set-an-margin
+.nr an-prevailing-indent \\n[IN]
+.fi
+.in \\n[an-margin]u
+.ti 0
+.HTML-TAG ".NH \\n[an-level]"
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+\." make the size of the head bigger
+.ps +3
+.ft B
+.ne (2v + 1u)
+.ie n \{\
+.\" if n (TTY output), use uppercase
+.toupper \\$*
+.\}
+.el \{\
+.nr an-break-flag 0
+.\" if not n (not TTY), use normal case (not uppercase)
+\\$1
+.in \\n[an-margin]u
+.ti 0
+.\" if not n (not TTY), put a border/line under subheading
+.sp -.6
+\l'\n(.lu'
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SS - level-two heading that works better for non-TTY output
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de1 SS
+.sp \\n[PD]u
+.nr an-level 1
+.set-an-margin
+.nr an-prevailing-indent \\n[IN]
+.fi
+.in \\n[IN]u
+.ti \\n[SN]u
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.ps \\n[PS-SS]u
+\." make the size of the head bigger
+.ps +2
+.ft B
+.ne (2v + 1u)
+.if \\n[.$] \&\\$*
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" BB/BE - put background/screen (filled box) around block of text
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de BB
+.if t \{\
+.sp -.5
+.br
+.in +2n
+.ll -2n
+.gcolor red
+.di BX
+.\}
+..
+.de EB
+.if t \{\
+.if "\\$2"adjust-for-leading-newline" \{\
+.sp -1
+.\}
+.br
+.di
+.in
+.ll
+.gcolor
+.nr BW \\n(.lu-\\n(.i
+.nr BH \\n(dn+.5v
+.ne \\n(BHu+.5v
+.ie "\\$2"adjust-for-leading-newline" \{\
+\M[\\$1]\h'1n'\v'+.5v'\D'P \\n(BWu 0 0 \\n(BHu -\\n(BWu 0 0 -\\n(BHu'\M[]
+.\}
+.el \{\
+\M[\\$1]\h'1n'\v'-.5v'\D'P \\n(BWu 0 0 \\n(BHu -\\n(BWu 0 0 -\\n(BHu'\M[]
+.\}
+.in 0
+.sp -.5v
+.nf
+.BX
+.in
+.sp .5v
+.fi
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" BM/EM - put colored marker in margin next to block of text
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de BM
+.if t \{\
+.br
+.ll -2n
+.gcolor red
+.di BX
+.\}
+..
+.de EM
+.if t \{\
+.br
+.di
+.ll
+.gcolor
+.nr BH \\n(dn
+.ne \\n(BHu
+\M[\\$1]\D'P -.75n 0 0 \\n(BHu -(\\n[.i]u - \\n(INu - .75n) 0 0 -\\n(BHu'\M[]
+.in 0
+.nf
+.BX
+.in
+.fi
+.\}
+..
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "Name"
+pam_get_authtok, pam_get_authtok_verify, pam_get_authtok_noverify \- get authentication token
+.SH "Synopsis"
+.sp
+.ft B
+.fam C
+.ps -1
+.nf
+#include <security/pam_ext\&.h>
+.fi
+.fam
+.ps +1
+.ft
+.fam C
+.HP \w'int\ pam_get_authtok('u
+.BI "int pam_get_authtok(pam_handle_t\ *" "pamh" ", int\ " "item" ", const\ char\ **" "authtok" ", const\ char\ *" "prompt" ");"
+.fam
+.fam C
+.HP \w'int\ pam_get_authtok_noverify('u
+.BI "int pam_get_authtok_noverify(pam_handle_t\ *" "pamh" ", const\ char\ **" "authtok" ", const\ char\ *" "prompt" ");"
+.fam
+.fam C
+.HP \w'int\ pam_get_authtok_verify('u
+.BI "int pam_get_authtok_verify(pam_handle_t\ *" "pamh" ", const\ char\ **" "authtok" ", const\ char\ *" "prompt" ");"
+.fam
+.SH "DESCRIPTION"
+.PP
+The
+\fBpam_get_authtok\fR
+function returns the cached authentication token, or prompts the user if no token is currently cached\&. It is intended for internal use by Linux\-PAM and PAM service modules\&. Upon successful return,
+\fIauthtok\fR
+contains a pointer to the value of the authentication token\&. Note, this is a pointer to the
+\fIactual\fR
+data and should
+\fBnot\fR
+be
+\fIfree()\fR\'ed or over\-written!
+.PP
+The
+\fIprompt\fR
+argument specifies a prompt to use if no token is cached\&. If a NULL pointer is given,
+\fBpam_get_authtok\fR
+uses pre\-defined prompts\&.
+.PP
+The following values are supported for
+\fIitem\fR:
+.PP
+PAM_AUTHTOK
+.RS 4
+Returns the current authentication token\&. Called from
+\fBpam_sm_chauthtok\fR(3)
+\fBpam_get_authtok\fR
+will ask the user to confirm the new token by retyping it\&. If a prompt was specified, "Retype" will be used as prefix\&.
+.RE
+.PP
+PAM_OLDAUTHTOK
+.RS 4
+Returns the previous authentication token when changing authentication tokens\&.
+.RE
+.PP
+The
+\fBpam_get_authtok_noverify\fR
+function can only be used for changing the password (from
+\fBpam_sm_chauthtok\fR(3))\&. It returns the cached authentication token, or prompts the user if no token is currently cached\&. The difference to
+\fBpam_get_authtok\fR
+is, that this function does not ask a second time for the password to verify it\&. Upon successful return,
+\fIauthtok\fR
+contains a pointer to the value of the authentication token\&. Note, this is a pointer to the
+\fIactual\fR
+data and should
+\fBnot\fR
+be
+\fIfree()\fR\'ed or over\-written!
+.PP
+The
+\fBpam_get_authtok_verify\fR
+function can only be used to verify a password for mistypes gotten by
+\fBpam_get_authtok_noverify\fR(3)\&. This function asks a second time for the password and verify it with the password provided by
+\fIauthtok\fR
+argument\&. In case of an error, the value of
+\fIauthtok\fR
+is undefined\&. Else this argument will point to the
+\fIactual\fR
+data and should
+\fBnot\fR
+be
+\fIfree()\fR\'ed or over\-written!
+.SH "OPTIONS"
+.PP
+
+\fBpam_get_authtok\fR
+honours the following module options:
+.PP
+\fBtry_first_pass\fR
+.RS 4
+Before prompting the user for their password, the module first tries the previous stacked module\'s password in case that satisfies this module as well\&.
+.RE
+.PP
+\fBuse_first_pass\fR
+.RS 4
+The argument
+\fBuse_first_pass\fR
+forces the module to use a previous stacked modules password and will never prompt the user \- if no password is available or the password is not appropriate, the user will be denied access\&.
+.RE
+.PP
+\fBuse_authtok\fR
+.RS 4
+When password changing enforce the module to set the new token to the one provided by a previously stacked
+\fBpassword\fR
+module\&. If no token is available token changing will fail\&.
+.RE
+.PP
+\fBauthtok_type=\fR\fB\fIXXX\fR\fR
+.RS 4
+The default action is for the module to use the following prompts when requesting passwords: "New UNIX password: " and "Retype UNIX password: "\&. The example word
+\fIUNIX\fR
+can be replaced with this option, by default it is empty\&.
+.RE
+.SH "RETURN VALUES"
+.PP
+PAM_AUTH_ERR
+.RS 4
+Authentication token could not be retrieved\&.
+.RE
+.PP
+PAM_AUTHTOK_ERR
+.RS 4
+New authentication could not be retrieved\&.
+.RE
+.PP
+PAM_SUCCESS
+.RS 4
+Authentication token was successfully retrieved\&.
+.RE
+.PP
+PAM_SYSTEM_ERR
+.RS 4
+No space for an authentication token was provided\&.
+.RE
+.PP
+PAM_TRY_AGAIN
+.RS 4
+New authentication tokens mismatch\&.
+.RE
+.SH "SEE ALSO"
+.PP
+
+\fBpam\fR(8)
+.SH "STANDARDS"
+.PP
+The
+\fBpam_get_authtok\fR
+function is a Linux\-PAM extensions\&.

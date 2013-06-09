@@ -1,0 +1,339 @@
+.\"     Title: pam_xauth
+.\"    Author: [see the "AUTHOR" section]
+.\" Generator: DocBook XSL Stylesheets v1.74.0 <http://docbook.sf.net/>
+.\"      Date: 08/17/2012
+.\"    Manual: Linux-PAM Manual
+.\"    Source: Linux-PAM Manual
+.\"  Language: English
+.\"
+.TH "PAM_XAUTH" "8" "08/17/2012" "Linux-PAM Manual" "Linux\-PAM Manual"
+.\" -----------------------------------------------------------------
+.\" * (re)Define some macros
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" toupper - uppercase a string (locale-aware)
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de toupper
+.tr aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ
+\\$*
+.tr aabbccddeeffgghhiijjkkllmmnnooppqqrrssttuuvvwwxxyyzz
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SH-xref - format a cross-reference to an SH section
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de SH-xref
+.ie n \{\
+.\}
+.toupper \\$*
+.el \{\
+\\$*
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SH - level-one heading that works better for non-TTY output
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de1 SH
+.\" put an extra blank line of space above the head in non-TTY output
+.if t \{\
+.sp 1
+.\}
+.sp \\n[PD]u
+.nr an-level 1
+.set-an-margin
+.nr an-prevailing-indent \\n[IN]
+.fi
+.in \\n[an-margin]u
+.ti 0
+.HTML-TAG ".NH \\n[an-level]"
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+\." make the size of the head bigger
+.ps +3
+.ft B
+.ne (2v + 1u)
+.ie n \{\
+.\" if n (TTY output), use uppercase
+.toupper \\$*
+.\}
+.el \{\
+.nr an-break-flag 0
+.\" if not n (not TTY), use normal case (not uppercase)
+\\$1
+.in \\n[an-margin]u
+.ti 0
+.\" if not n (not TTY), put a border/line under subheading
+.sp -.6
+\l'\n(.lu'
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SS - level-two heading that works better for non-TTY output
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de1 SS
+.sp \\n[PD]u
+.nr an-level 1
+.set-an-margin
+.nr an-prevailing-indent \\n[IN]
+.fi
+.in \\n[IN]u
+.ti \\n[SN]u
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.ps \\n[PS-SS]u
+\." make the size of the head bigger
+.ps +2
+.ft B
+.ne (2v + 1u)
+.if \\n[.$] \&\\$*
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" BB/BE - put background/screen (filled box) around block of text
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de BB
+.if t \{\
+.sp -.5
+.br
+.in +2n
+.ll -2n
+.gcolor red
+.di BX
+.\}
+..
+.de EB
+.if t \{\
+.if "\\$2"adjust-for-leading-newline" \{\
+.sp -1
+.\}
+.br
+.di
+.in
+.ll
+.gcolor
+.nr BW \\n(.lu-\\n(.i
+.nr BH \\n(dn+.5v
+.ne \\n(BHu+.5v
+.ie "\\$2"adjust-for-leading-newline" \{\
+\M[\\$1]\h'1n'\v'+.5v'\D'P \\n(BWu 0 0 \\n(BHu -\\n(BWu 0 0 -\\n(BHu'\M[]
+.\}
+.el \{\
+\M[\\$1]\h'1n'\v'-.5v'\D'P \\n(BWu 0 0 \\n(BHu -\\n(BWu 0 0 -\\n(BHu'\M[]
+.\}
+.in 0
+.sp -.5v
+.nf
+.BX
+.in
+.sp .5v
+.fi
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" BM/EM - put colored marker in margin next to block of text
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de BM
+.if t \{\
+.br
+.ll -2n
+.gcolor red
+.di BX
+.\}
+..
+.de EM
+.if t \{\
+.br
+.di
+.ll
+.gcolor
+.nr BH \\n(dn
+.ne \\n(BHu
+\M[\\$1]\D'P -.75n 0 0 \\n(BHu -(\\n[.i]u - \\n(INu - .75n) 0 0 -\\n(BHu'\M[]
+.in 0
+.nf
+.BX
+.in
+.fi
+.\}
+..
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "Name"
+pam_xauth \- PAM module to forward xauth keys between users
+.SH "Synopsis"
+.fam C
+.HP \w'\fBpam_xauth\&.so\fR\ 'u
+\fBpam_xauth\&.so\fR [debug] [xauthpath=\fI/path/to/xauth\fR] [systemuser=\fIUID\fR] [targetuser=\fIUID\fR]
+.fam
+.SH "DESCRIPTION"
+.PP
+The pam_xauth PAM module is designed to forward xauth keys (sometimes referred to as "cookies") between users\&.
+.PP
+Without pam_xauth, when xauth is enabled and a user uses the
+\fBsu\fR(1)
+command to assume another user\'s privileges, that user is no longer able to access the original user\'s X display because the new user does not have the key needed to access the display\&. pam_xauth solves the problem by forwarding the key from the user running su (the source user) to the user whose identity the source user is assuming (the target user) when the session is created, and destroying the key when the session is torn down\&.
+.PP
+This means, for example, that when you run
+\fBsu\fR(1)
+from an xterm session, you will be able to run X programs without explicitly dealing with the
+\fBxauth\fR(1)
+xauth command or ~/\&.Xauthority files\&.
+.PP
+pam_xauth will only forward keys if xauth can list a key connected to the $DISPLAY environment variable\&.
+.PP
+Primitive access control is provided by
+\FC~/\&.xauth/export\F[]
+in the invoking user\'s home directory and
+\FC~/\&.xauth/import\F[]
+in the target user\'s home directory\&.
+.PP
+If a user has a
+\FC~/\&.xauth/import\F[]
+file, the user will only receive cookies from users listed in the file\&. If there is no
+\FC~/\&.xauth/import\F[]
+file, the user will accept cookies from any other user\&.
+.PP
+If a user has a
+\FC\&.xauth/export\F[]
+file, the user will only forward cookies to users listed in the file\&. If there is no
+\FC~/\&.xauth/export\F[]
+file, and the invoking user is not
+\fBroot\fR, the user will forward cookies to any other user\&. If there is no
+\FC~/\&.xauth/export\F[]
+file, and the invoking user is
+\fBroot\fR, the user will
+\fInot\fR
+forward cookies to other users\&.
+.PP
+Both the import and export files support wildcards (such as
+\fI*\fR)\&. Both the import and export files can be empty, signifying that no users are allowed\&.
+.SH "OPTIONS"
+.PP
+\fBdebug\fR
+.RS 4
+Print debug information\&.
+.RE
+.PP
+\fBxauthpath=\fR\fB\fI/path/to/xauth\fR\fR
+.RS 4
+Specify the path the xauth program (it is expected in
+\FC/usr/X11R6/bin/xauth\F[],
+\FC/usr/bin/xauth\F[], or
+\FC/usr/bin/X11/xauth\F[]
+by default)\&.
+.RE
+.PP
+\fBsystemuser=\fR\fB\fIUID\fR\fR
+.RS 4
+Specify the highest UID which will be assumed to belong to a "system" user\&. pam_xauth will refuse to forward credentials to users with UID less than or equal to this number, except for root and the "targetuser", if specified\&.
+.RE
+.PP
+\fBtargetuser=\fR\fB\fIUID\fR\fR
+.RS 4
+Specify a single target UID which is exempt from the systemuser check\&.
+.RE
+.SH "MODULE TYPES PROVIDED"
+.PP
+Only the
+\fBsession\fR
+type is provided\&.
+.SH "RETURN VALUES"
+.PP
+PAM_BUF_ERR
+.RS 4
+Memory buffer error\&.
+.RE
+.PP
+PAM_PERM_DENIED
+.RS 4
+Permission denied by import/export file\&.
+.RE
+.PP
+PAM_SESSION_ERR
+.RS 4
+Cannot determine user name, UID or access users home directory\&.
+.RE
+.PP
+PAM_SUCCESS
+.RS 4
+Success\&.
+.RE
+.PP
+PAM_USER_UNKNOWN
+.RS 4
+User not known\&.
+.RE
+.SH "EXAMPLES"
+.PP
+Add the following line to
+\FC/etc/pam\&.d/su\F[]
+to forward xauth keys between users when calling su:
+.sp
+.if n \{\
+.RS 4
+.\}
+.fam C
+.ps -1
+.nf
+.if t \{\
+.sp -1
+.\}
+.BB lightgray adjust-for-leading-newline
+.sp -1
+
+session  optional  pam_xauth\&.so
+      
+.EB lightgray adjust-for-leading-newline
+.if t \{\
+.sp 1
+.\}
+.fi
+.fam
+.ps +1
+.if n \{\
+.RE
+.\}
+.sp
+.SH "IMPLEMENTATION DETAILS"
+.PP
+pam_xauth will work
+\fIonly\fR
+if it is used from a setuid application in which the
+\fBgetuid\fR() call returns the id of the user running the application, and for which PAM can supply the name of the account that the user is attempting to assume\&. The typical application of this type is
+\fBsu\fR(1)\&. The application must call both
+\fBpam_open_session\fR() and
+\fBpam_close_session\fR() with the ruid set to the uid of the calling user and the euid set to root, and must have provided as the PAM_USER item the name of the target user\&.
+.PP
+pam_xauth calls
+\fBxauth\fR(1)
+as the source user to extract the key for $DISPLAY, then calls xauth as the target user to merge the key into the a temporary database and later remove the database\&.
+.PP
+pam_xauth cannot be told to not remove the keys when the session is closed\&.
+.SH "FILES"
+.PP
+\FC~/\&.xauth/import\F[]
+.RS 4
+XXX
+.RE
+.PP
+\FC~/\&.xauth/export\F[]
+.RS 4
+XXX
+.RE
+.SH "SEE ALSO"
+.PP
+
+\fBpam.conf\fR(5),
+\fBpam.d\fR(5),
+\fBpam\fR(8)
+.SH "AUTHOR"
+.PP
+pam_xauth was written by Nalin Dahyabhai <nalin@redhat\&.com>, based on original version by Michael K\&. Johnson <johnsonm@redhat\&.com>\&.

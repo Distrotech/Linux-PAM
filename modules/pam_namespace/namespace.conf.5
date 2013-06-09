@@ -1,0 +1,313 @@
+.\"     Title: namespace.conf
+.\"    Author: [see the "AUTHORS" section]
+.\" Generator: DocBook XSL Stylesheets v1.74.0 <http://docbook.sf.net/>
+.\"      Date: 08/17/2012
+.\"    Manual: Linux-PAM Manual
+.\"    Source: Linux-PAM Manual
+.\"  Language: English
+.\"
+.TH "NAMESPACE\&.CONF" "5" "08/17/2012" "Linux-PAM Manual" "Linux\-PAM Manual"
+.\" -----------------------------------------------------------------
+.\" * (re)Define some macros
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" toupper - uppercase a string (locale-aware)
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de toupper
+.tr aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ
+\\$*
+.tr aabbccddeeffgghhiijjkkllmmnnooppqqrrssttuuvvwwxxyyzz
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SH-xref - format a cross-reference to an SH section
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de SH-xref
+.ie n \{\
+.\}
+.toupper \\$*
+.el \{\
+\\$*
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SH - level-one heading that works better for non-TTY output
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de1 SH
+.\" put an extra blank line of space above the head in non-TTY output
+.if t \{\
+.sp 1
+.\}
+.sp \\n[PD]u
+.nr an-level 1
+.set-an-margin
+.nr an-prevailing-indent \\n[IN]
+.fi
+.in \\n[an-margin]u
+.ti 0
+.HTML-TAG ".NH \\n[an-level]"
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+\." make the size of the head bigger
+.ps +3
+.ft B
+.ne (2v + 1u)
+.ie n \{\
+.\" if n (TTY output), use uppercase
+.toupper \\$*
+.\}
+.el \{\
+.nr an-break-flag 0
+.\" if not n (not TTY), use normal case (not uppercase)
+\\$1
+.in \\n[an-margin]u
+.ti 0
+.\" if not n (not TTY), put a border/line under subheading
+.sp -.6
+\l'\n(.lu'
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SS - level-two heading that works better for non-TTY output
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de1 SS
+.sp \\n[PD]u
+.nr an-level 1
+.set-an-margin
+.nr an-prevailing-indent \\n[IN]
+.fi
+.in \\n[IN]u
+.ti \\n[SN]u
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.ps \\n[PS-SS]u
+\." make the size of the head bigger
+.ps +2
+.ft B
+.ne (2v + 1u)
+.if \\n[.$] \&\\$*
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" BB/BE - put background/screen (filled box) around block of text
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de BB
+.if t \{\
+.sp -.5
+.br
+.in +2n
+.ll -2n
+.gcolor red
+.di BX
+.\}
+..
+.de EB
+.if t \{\
+.if "\\$2"adjust-for-leading-newline" \{\
+.sp -1
+.\}
+.br
+.di
+.in
+.ll
+.gcolor
+.nr BW \\n(.lu-\\n(.i
+.nr BH \\n(dn+.5v
+.ne \\n(BHu+.5v
+.ie "\\$2"adjust-for-leading-newline" \{\
+\M[\\$1]\h'1n'\v'+.5v'\D'P \\n(BWu 0 0 \\n(BHu -\\n(BWu 0 0 -\\n(BHu'\M[]
+.\}
+.el \{\
+\M[\\$1]\h'1n'\v'-.5v'\D'P \\n(BWu 0 0 \\n(BHu -\\n(BWu 0 0 -\\n(BHu'\M[]
+.\}
+.in 0
+.sp -.5v
+.nf
+.BX
+.in
+.sp .5v
+.fi
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" BM/EM - put colored marker in margin next to block of text
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de BM
+.if t \{\
+.br
+.ll -2n
+.gcolor red
+.di BX
+.\}
+..
+.de EM
+.if t \{\
+.br
+.di
+.ll
+.gcolor
+.nr BH \\n(dn
+.ne \\n(BHu
+\M[\\$1]\D'P -.75n 0 0 \\n(BHu -(\\n[.i]u - \\n(INu - .75n) 0 0 -\\n(BHu'\M[]
+.in 0
+.nf
+.BX
+.in
+.fi
+.\}
+..
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "Name"
+namespace.conf \- the namespace configuration file
+.SH "DESCRIPTION"
+.PP
+The
+\fIpam_namespace\&.so\fR
+module allows setup of private namespaces with polyinstantiated directories\&. Directories can be polyinstantiated based on user name or, in the case of SELinux, user name, sensitivity level or complete security context\&. If an executable script
+\FC/etc/security/namespace\&.init\F[]
+exists, it is used to initialize the namespace every time an instance directory is set up and mounted\&. The script receives the polyinstantiated directory path and the instance directory path as its arguments\&.
+.PP
+The
+\FC/etc/security/namespace\&.conf\F[]
+file specifies which directories are polyinstantiated, how they are polyinstantiated, how instance directories would be named, and any users for whom polyinstantiation would not be performed\&.
+.PP
+When someone logs in, the file
+\FCnamespace\&.conf\F[]
+is scanned\&. Comments are marked by
+\fI#\fR
+characters\&. Each non comment line represents one polyinstantiated directory\&. The fields are separated by spaces but can be quoted by
+\fI"\fR
+characters also escape sequences
+\fI\eb\fR,
+\fI\en\fR, and
+\fI\et\fR
+are recognized\&. The fields are as follows:
+.PP
+\fIpolydir\fR
+\fIinstance_prefix\fR
+\fImethod\fR
+\fIlist_of_uids\fR
+.PP
+The first field,
+\fIpolydir\fR, is the absolute pathname of the directory to polyinstantiate\&. The special string
+\fI$HOME\fR
+is replaced with the user\'s home directory, and
+\fI$USER\fR
+with the username\&. This field cannot be blank\&.
+.PP
+The second field,
+\fIinstance_prefix\fR
+is the string prefix used to build the pathname for the instantiation of <polydir>\&. Depending on the polyinstantiation
+\fImethod\fR
+it is then appended with "instance differentiation string" to generate the final instance directory path\&. This directory is created if it did not exist already, and is then bind mounted on the <polydir> to provide an instance of <polydir> based on the <method> column\&. The special string
+\fI$HOME\fR
+is replaced with the user\'s home directory, and
+\fI$USER\fR
+with the username\&. This field cannot be blank\&.
+.PP
+The third field,
+\fImethod\fR, is the method used for polyinstantiation\&. It can take these values; "user" for polyinstantiation based on user name, "level" for polyinstantiation based on process MLS level and user name, "context" for polyinstantiation based on process security context and user name, "tmpfs" for mounting tmpfs filesystem as an instance dir, and "tmpdir" for creating temporary directory as an instance dir which is removed when the user\'s session is closed\&. Methods "context" and "level" are only available with SELinux\&. This field cannot be blank\&.
+.PP
+The fourth field,
+\fIlist_of_uids\fR, is a comma separated list of user names for whom the polyinstantiation is not performed\&. If left blank, polyinstantiation will be performed for all users\&. If the list is preceded with a single "~" character, polyinstantiation is performed only for users in the list\&.
+.PP
+The
+\fImethod\fR
+field can contain also following optional flags separated by
+\fI:\fR
+characters\&.
+.PP
+\fIcreate\fR=\fImode\fR,\fIowner\fR,\fIgroup\fR
+\- create the polyinstantiated directory\&. The mode, owner and group parameters are optional\&. The default for mode is determined by umask, the default owner is the user whose session is opened, the default group is the primary group of the user\&.
+.PP
+\fIiscript\fR=\fIpath\fR
+\- path to the instance directory init script\&. The base directory for relative paths is
+\FC/etc/security/namespace\&.d\F[]\&.
+.PP
+\fInoinit\fR
+\- instance directory init script will not be executed\&.
+.PP
+\fIshared\fR
+\- the instance directories for "context" and "level" methods will not contain the user name and will be shared among all users\&.
+.PP
+The directory where polyinstantiated instances are to be created, must exist and must have, by default, the mode of 0000\&. The requirement that the instance parent be of mode 0000 can be overridden with the command line option
+\fIignore_instance_parent_mode\fR
+.PP
+In case of context or level polyinstantiation the SELinux context which is used for polyinstantiation is the context used for executing a new process as obtained by getexeccon\&. This context must be set by the calling application or
+\FCpam_selinux\&.so\F[]
+module\&. If this context is not set the polyinstatiation will be based just on user name\&.
+.PP
+The "instance differentiation string" is <user name> for "user" method and <user name>_<raw directory context> for "context" and "level" methods\&. If the whole string is too long the end of it is replaced with md5sum of itself\&. Also when command line option
+\fIgen_hash\fR
+is used the whole string is replaced with md5sum of itself\&.
+.SH "EXAMPLES"
+.PP
+These are some example lines which might be specified in
+\FC/etc/security/namespace\&.conf\F[]\&.
+.sp
+.if n \{\
+.RS 4
+.\}
+.fam C
+.ps -1
+.nf
+.if t \{\
+.sp -1
+.\}
+.BB lightgray adjust-for-leading-newline
+.sp -1
+
+      # The following three lines will polyinstantiate /tmp,
+      # /var/tmp and user\'s home directories\&. /tmp and /var/tmp
+      # will be polyinstantiated based on the security level
+      # as well as user name, whereas home directory will be
+      # polyinstantiated based on the full security context and user name\&.
+      # Polyinstantiation will not be performed for user root
+      # and adm for directories /tmp and /var/tmp, whereas home
+      # directories will be polyinstantiated for all users\&.
+      #
+      # Note that instance directories do not have to reside inside
+      # the polyinstantiated directory\&. In the examples below,
+      # instances of /tmp will be created in /tmp\-inst directory,
+      # where as instances of /var/tmp and users home directories
+      # will reside within the directories that are being
+      # polyinstantiated\&.
+      #
+      /tmp     /tmp\-inst/               level      root,adm
+      /var/tmp /var/tmp/tmp\-inst/   	level      root,adm
+      $HOME    $HOME/$USER\&.inst/inst\- context
+    
+.EB lightgray adjust-for-leading-newline
+.if t \{\
+.sp 1
+.\}
+.fi
+.fam
+.ps +1
+.if n \{\
+.RE
+.\}
+.PP
+For the <service>s you need polyinstantiation (login for example) put the following line in /etc/pam\&.d/<service> as the last line for session group:
+.PP
+session required pam_namespace\&.so [arguments]
+.PP
+This module also depends on pam_selinux\&.so setting the context\&.
+.SH "SEE ALSO"
+.PP
+
+\fBpam_namespace\fR(8),
+\fBpam.d\fR(5),
+\fBpam\fR(8)
+.SH "AUTHORS"
+.PP
+The namespace\&.conf manual page was written by Janak Desai <janak@us\&.ibm\&.com>\&. More features added by Tomas Mraz <tmraz@redhat\&.com>\&.

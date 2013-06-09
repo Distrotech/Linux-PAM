@@ -1,0 +1,265 @@
+.\"     Title: pam_set_data
+.\"    Author: [FIXME: author] [see http://docbook.sf.net/el/author]
+.\" Generator: DocBook XSL Stylesheets v1.74.0 <http://docbook.sf.net/>
+.\"      Date: 08/17/2012
+.\"    Manual: Linux-PAM Manual
+.\"    Source: Linux-PAM Manual
+.\"  Language: English
+.\"
+.TH "PAM_SET_DATA" "3" "08/17/2012" "Linux-PAM Manual" "Linux-PAM Manual"
+.\" -----------------------------------------------------------------
+.\" * (re)Define some macros
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" toupper - uppercase a string (locale-aware)
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de toupper
+.tr aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ
+\\$*
+.tr aabbccddeeffgghhiijjkkllmmnnooppqqrrssttuuvvwwxxyyzz
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SH-xref - format a cross-reference to an SH section
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de SH-xref
+.ie n \{\
+.\}
+.toupper \\$*
+.el \{\
+\\$*
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SH - level-one heading that works better for non-TTY output
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de1 SH
+.\" put an extra blank line of space above the head in non-TTY output
+.if t \{\
+.sp 1
+.\}
+.sp \\n[PD]u
+.nr an-level 1
+.set-an-margin
+.nr an-prevailing-indent \\n[IN]
+.fi
+.in \\n[an-margin]u
+.ti 0
+.HTML-TAG ".NH \\n[an-level]"
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+\." make the size of the head bigger
+.ps +3
+.ft B
+.ne (2v + 1u)
+.ie n \{\
+.\" if n (TTY output), use uppercase
+.toupper \\$*
+.\}
+.el \{\
+.nr an-break-flag 0
+.\" if not n (not TTY), use normal case (not uppercase)
+\\$1
+.in \\n[an-margin]u
+.ti 0
+.\" if not n (not TTY), put a border/line under subheading
+.sp -.6
+\l'\n(.lu'
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SS - level-two heading that works better for non-TTY output
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de1 SS
+.sp \\n[PD]u
+.nr an-level 1
+.set-an-margin
+.nr an-prevailing-indent \\n[IN]
+.fi
+.in \\n[IN]u
+.ti \\n[SN]u
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.ps \\n[PS-SS]u
+\." make the size of the head bigger
+.ps +2
+.ft B
+.ne (2v + 1u)
+.if \\n[.$] \&\\$*
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" BB/BE - put background/screen (filled box) around block of text
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de BB
+.if t \{\
+.sp -.5
+.br
+.in +2n
+.ll -2n
+.gcolor red
+.di BX
+.\}
+..
+.de EB
+.if t \{\
+.if "\\$2"adjust-for-leading-newline" \{\
+.sp -1
+.\}
+.br
+.di
+.in
+.ll
+.gcolor
+.nr BW \\n(.lu-\\n(.i
+.nr BH \\n(dn+.5v
+.ne \\n(BHu+.5v
+.ie "\\$2"adjust-for-leading-newline" \{\
+\M[\\$1]\h'1n'\v'+.5v'\D'P \\n(BWu 0 0 \\n(BHu -\\n(BWu 0 0 -\\n(BHu'\M[]
+.\}
+.el \{\
+\M[\\$1]\h'1n'\v'-.5v'\D'P \\n(BWu 0 0 \\n(BHu -\\n(BWu 0 0 -\\n(BHu'\M[]
+.\}
+.in 0
+.sp -.5v
+.nf
+.BX
+.in
+.sp .5v
+.fi
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" BM/EM - put colored marker in margin next to block of text
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de BM
+.if t \{\
+.br
+.ll -2n
+.gcolor red
+.di BX
+.\}
+..
+.de EM
+.if t \{\
+.br
+.di
+.ll
+.gcolor
+.nr BH \\n(dn
+.ne \\n(BHu
+\M[\\$1]\D'P -.75n 0 0 \\n(BHu -(\\n[.i]u - \\n(INu - .75n) 0 0 -\\n(BHu'\M[]
+.in 0
+.nf
+.BX
+.in
+.fi
+.\}
+..
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "Name"
+pam_set_data \- set module internal data
+.SH "Synopsis"
+.sp
+.ft B
+.fam C
+.ps -1
+.nf
+#include <security/pam_modules\&.h>
+.fi
+.fam
+.ps +1
+.ft
+.fam C
+.HP \w'int\ pam_set_data('u
+.BI "int pam_set_data(pam_handle_t\ *" "pamh" ", const\ char\ *" "module_data_name" ", void\ *" "data" ", void\ " "(*cleanup)(pam_handle_t\ *pamh,\ void\ *data,\ int\ error_status)" ");"
+.fam
+.SH "DESCRIPTION"
+.PP
+The
+\fBpam_set_data\fR
+function associates a pointer to an object with the (hopefully) unique string
+\fImodule_data_name\fR
+in the PAM context specified by the
+\fIpamh\fR
+argument\&.
+.PP
+PAM modules may be dynamically loadable objects\&. In general such files should not contain
+\fIstatic\fR
+variables\&. This function and its counterpart
+\fBpam_get_data\fR(3), provide a mechanism for a module to associate some data with the handle
+\fIpamh\fR\&. Typically a module will call the
+\fBpam_set_data\fR
+function to register some data under a (hopefully) unique
+\fImodule_data_name\fR\&. The data is available for use by other modules too but
+\fInot\fR
+by an application\&. Since this functions stores only a pointer to the
+\fIdata\fR, the module should not modify or free the content of it\&.
+.PP
+The function
+\fBcleanup()\fR
+is associated with the
+\fIdata\fR
+and, if non\-NULL, it is called when this data is over\-written or following a call to
+\fBpam_end\fR(3)\&.
+.PP
+The
+\fIerror_status\fR
+argument is used to indicate to the module the sort of action it is to take in cleaning this data item\&. As an example, Kerberos creates a ticket file during the authentication phase, this file might be associated with a data item\&. When
+\fBpam_end\fR(3)
+is called by the module, the
+\fIerror_status\fR
+carries the return value of the
+\fBpam_authenticate\fR(3)
+or other
+\fIlibpam\fR
+function as appropriate\&. Based on this value the Kerberos module may choose to delete the ticket file (\fIauthentication failure\fR) or leave it in place\&.
+.PP
+The
+\fIerror_status\fR
+may have been logically OR\'d with either of the following two values:
+.PP
+PAM_DATA_REPLACE
+.RS 4
+When a data item is being replaced (through a second call to
+\fBpam_set_data\fR) this mask is used\&. Otherwise, the call is assumed to be from
+\fBpam_end\fR(3)\&.
+.RE
+.PP
+PAM_DATA_SILENT
+.RS 4
+Which indicates that the process would prefer to perform the
+\fBcleanup()\fR
+quietly\&. That is, discourages logging/messages to the user\&.
+.RE
+.SH "RETURN VALUES"
+.PP
+PAM_BUF_ERR
+.RS 4
+Memory buffer error\&.
+.RE
+.PP
+PAM_SUCCESS
+.RS 4
+Data was successful stored\&.
+.RE
+.PP
+PAM_SYSTEM_ERR
+.RS 4
+A NULL pointer was submitted as PAM handle or the function was called by an application\&.
+.RE
+.SH "SEE ALSO"
+.PP
+
+\fBpam_end\fR(3),
+\fBpam_get_data\fR(3),
+\fBpam_strerror\fR(3)

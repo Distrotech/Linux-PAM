@@ -1,0 +1,339 @@
+.\"     Title: pam_conv
+.\"    Author: [FIXME: author] [see http://docbook.sf.net/el/author]
+.\" Generator: DocBook XSL Stylesheets v1.74.0 <http://docbook.sf.net/>
+.\"      Date: 08/17/2012
+.\"    Manual: Linux-PAM Manual
+.\"    Source: Linux-PAM Manual
+.\"  Language: English
+.\"
+.TH "PAM_CONV" "3" "08/17/2012" "Linux-PAM Manual" "Linux-PAM Manual"
+.\" -----------------------------------------------------------------
+.\" * (re)Define some macros
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" toupper - uppercase a string (locale-aware)
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de toupper
+.tr aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ
+\\$*
+.tr aabbccddeeffgghhiijjkkllmmnnooppqqrrssttuuvvwwxxyyzz
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SH-xref - format a cross-reference to an SH section
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de SH-xref
+.ie n \{\
+.\}
+.toupper \\$*
+.el \{\
+\\$*
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SH - level-one heading that works better for non-TTY output
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de1 SH
+.\" put an extra blank line of space above the head in non-TTY output
+.if t \{\
+.sp 1
+.\}
+.sp \\n[PD]u
+.nr an-level 1
+.set-an-margin
+.nr an-prevailing-indent \\n[IN]
+.fi
+.in \\n[an-margin]u
+.ti 0
+.HTML-TAG ".NH \\n[an-level]"
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+\." make the size of the head bigger
+.ps +3
+.ft B
+.ne (2v + 1u)
+.ie n \{\
+.\" if n (TTY output), use uppercase
+.toupper \\$*
+.\}
+.el \{\
+.nr an-break-flag 0
+.\" if not n (not TTY), use normal case (not uppercase)
+\\$1
+.in \\n[an-margin]u
+.ti 0
+.\" if not n (not TTY), put a border/line under subheading
+.sp -.6
+\l'\n(.lu'
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SS - level-two heading that works better for non-TTY output
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de1 SS
+.sp \\n[PD]u
+.nr an-level 1
+.set-an-margin
+.nr an-prevailing-indent \\n[IN]
+.fi
+.in \\n[IN]u
+.ti \\n[SN]u
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.ps \\n[PS-SS]u
+\." make the size of the head bigger
+.ps +2
+.ft B
+.ne (2v + 1u)
+.if \\n[.$] \&\\$*
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" BB/BE - put background/screen (filled box) around block of text
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de BB
+.if t \{\
+.sp -.5
+.br
+.in +2n
+.ll -2n
+.gcolor red
+.di BX
+.\}
+..
+.de EB
+.if t \{\
+.if "\\$2"adjust-for-leading-newline" \{\
+.sp -1
+.\}
+.br
+.di
+.in
+.ll
+.gcolor
+.nr BW \\n(.lu-\\n(.i
+.nr BH \\n(dn+.5v
+.ne \\n(BHu+.5v
+.ie "\\$2"adjust-for-leading-newline" \{\
+\M[\\$1]\h'1n'\v'+.5v'\D'P \\n(BWu 0 0 \\n(BHu -\\n(BWu 0 0 -\\n(BHu'\M[]
+.\}
+.el \{\
+\M[\\$1]\h'1n'\v'-.5v'\D'P \\n(BWu 0 0 \\n(BHu -\\n(BWu 0 0 -\\n(BHu'\M[]
+.\}
+.in 0
+.sp -.5v
+.nf
+.BX
+.in
+.sp .5v
+.fi
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" BM/EM - put colored marker in margin next to block of text
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de BM
+.if t \{\
+.br
+.ll -2n
+.gcolor red
+.di BX
+.\}
+..
+.de EM
+.if t \{\
+.br
+.di
+.ll
+.gcolor
+.nr BH \\n(dn
+.ne \\n(BHu
+\M[\\$1]\D'P -.75n 0 0 \\n(BHu -(\\n[.i]u - \\n(INu - .75n) 0 0 -\\n(BHu'\M[]
+.in 0
+.nf
+.BX
+.in
+.fi
+.\}
+..
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "Name"
+pam_conv \- PAM conversation function
+.SH "Synopsis"
+.sp
+.ft B
+.fam C
+.ps -1
+.nf
+#include <security/pam_appl\&.h>
+.fi
+.fam
+.ps +1
+.ft
+.sp
+.fam C
+.ps -1
+.nf
+struct pam_message {
+    int msg_style;
+    const char *msg;
+};
+
+struct pam_response {
+    char *resp;
+    int resp_retcode;
+};
+
+struct pam_conv {
+    int (*conv)(int num_msg, const struct pam_message **msg,
+                struct pam_response **resp, void *appdata_ptr);
+    void *appdata_ptr;
+};
+    
+.fi
+.fam
+.ps +1
+.SH "DESCRIPTION"
+.PP
+The PAM library uses an application\-defined callback to allow a direct communication between a loaded module and the application\&. This callback is specified by the
+\fIstruct pam_conv\fR
+passed to
+\fBpam_start\fR(3)
+at the start of the transaction\&.
+.PP
+When a module calls the referenced conv() function, the argument
+\fIappdata_ptr\fR
+is set to the second element of this structure\&.
+.PP
+The other arguments of a call to conv() concern the information exchanged by module and application\&. That is to say,
+\fInum_msg\fR
+holds the length of the array of pointers,
+\fImsg\fR\&. After a successful return, the pointer
+\fIresp\fR
+points to an array of pam_response structures, holding the application supplied text\&. The
+\fIresp_retcode\fR
+member of this struct is unused and should be set to zero\&. It is the caller\'s responsibility to release both, this array and the responses themselves, using
+\fBfree\fR(3)\&. Note,
+\fI*resp\fR
+is a
+\fIstruct pam_response\fR
+array and not an array of pointers\&.
+.PP
+The number of responses is always equal to the
+\fInum_msg\fR
+conversation function argument\&. This does require that the response array is
+\fBfree\fR(3)\'d after every call to the conversation function\&. The index of the responses corresponds directly to the prompt index in the pam_message array\&.
+.PP
+On failure, the conversation function should release any resources it has allocated, and return one of the predefined PAM error codes\&.
+.PP
+Each message can have one of four types, specified by the
+\fImsg_style\fR
+member of
+\fIstruct pam_message\fR:
+.PP
+PAM_PROMPT_ECHO_OFF
+.RS 4
+Obtain a string without echoing any text\&.
+.RE
+.PP
+PAM_PROMPT_ECHO_ON
+.RS 4
+Obtain a string whilst echoing text\&.
+.RE
+.PP
+PAM_ERROR_MSG
+.RS 4
+Display an error message\&.
+.RE
+.PP
+PAM_TEXT_INFO
+.RS 4
+Display some text\&.
+.RE
+.PP
+The point of having an array of messages is that it becomes possible to pass a number of things to the application in a single call from the module\&. It can also be convenient for the application that related things come at once: a windows based application can then present a single form with many messages/prompts on at once\&.
+.PP
+In passing, it is worth noting that there is a descrepency between the way Linux\-PAM handles the const struct pam_message **msg conversation function argument from the way that Solaris\' PAM (and derivitives, known to include HP/UX, are there others?) does\&. Linux\-PAM interprets the msg argument as entirely equivalent to the following prototype const struct pam_message *msg[] (which, in spirit, is consistent with the commonly used prototypes for argv argument to the familiar main() function: char **argv; and char *argv[])\&. Said another way Linux\-PAM interprets the msg argument as a pointer to an array of num_msg read only \'struct pam_message\' pointers\&. Solaris\' PAM implementation interprets this argument as a pointer to a pointer to an array of num_msg pam_message structures\&. Fortunately, perhaps, for most module/application developers when num_msg has a value of one these two definitions are entirely equivalent\&. Unfortunately, casually raising this number to two has led to unanticipated compatibility problems\&.
+.PP
+For what its worth the two known module writer work\-arounds for trying to maintain source level compatibility with both PAM implementations are:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+never call the conversation function with num_msg greater than one\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+set up msg as doubly referenced so both types of conversation function can find the messages\&. That is, make
+.sp
+.if n \{\
+.RS 4
+.\}
+.fam C
+.ps -1
+.nf
+.if t \{\
+.sp -1
+.\}
+.BB lightgray adjust-for-leading-newline
+.sp -1
+
+       msg[n] = & (( *msg )[n])
+       
+.EB lightgray adjust-for-leading-newline
+.if t \{\
+.sp 1
+.\}
+.fi
+.fam
+.ps +1
+.if n \{\
+.RE
+.\}
+.RE
+.SH "RETURN VALUES"
+.PP
+PAM_BUF_ERR
+.RS 4
+Memory buffer error\&.
+.RE
+.PP
+PAM_CONV_ERR
+.RS 4
+Conversation failure\&. The application should not set
+\fI*resp\fR\&.
+.RE
+.PP
+PAM_SUCCESS
+.RS 4
+Success\&.
+.RE
+.SH "SEE ALSO"
+.PP
+
+\fBpam_start\fR(3),
+\fBpam_set_item\fR(3),
+\fBpam_get_item\fR(3),
+\fBpam_strerror\fR(3),
+\fBpam\fR(8)
